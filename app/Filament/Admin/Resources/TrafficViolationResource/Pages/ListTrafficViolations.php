@@ -1,0 +1,11 @@
+<?php
+
+namespace App\Filament\Admin\Resources\TrafficViolationResource\Pages;
+
+use App\Filament\Admin\Resources\TrafficViolationResource;
+use Filament\Resources\Pages\ListRecords;
+
+class ListTrafficViolations extends ListRecords
+{
+    protected static string $resource = TrafficViolationResource::class;
+}
