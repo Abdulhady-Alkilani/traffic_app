@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Admin\Resources;
 
 use App\Enums\ViolationStatus;
@@ -19,7 +21,20 @@ class TrafficViolationResource extends Resource
 
     protected static ?int $navigationSort = 4;
 
-    protected static ?string $navigationLabel = 'Traffic Violations';
+    public static function getNavigationLabel(): string
+    {
+        return __('messages.violations');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('messages.violation');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('messages.violations');
+    }
 
     public static function canCreate(): bool
     {
@@ -30,34 +45,34 @@ class TrafficViolationResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Violation Details')
+                Forms\Components\Section::make(__('filament.sections.violation_details'))
                     ->schema([
                         Forms\Components\TextInput::make('citizen.full_name')
-                            ->label('Citizen')
+                            ->label(__('filament.columns.citizen'))
                             ->disabled(),
                         Forms\Components\TextInput::make('vehicle.plate_number')
-                            ->label('Vehicle Plate')
+                            ->label(__('messages.plate_number'))
                             ->disabled(),
                         Forms\Components\TextInput::make('police.full_name')
-                            ->label('Officer')
+                            ->label(__('messages.officer'))
                             ->disabled(),
                         Forms\Components\TextInput::make('violation_type')
-                            ->label('Violation Type')
+                            ->label(__('messages.violation_type'))
                             ->disabled(),
                         Forms\Components\TextInput::make('fine_amount')
-                            ->label('Fine Amount (SAR)')
+                            ->label(__('messages.fine_amount') . ' (SAR)')
                             ->disabled(),
                         Forms\Components\TextInput::make('issued_at')
-                            ->label('Issued At')
+                            ->label(__('messages.issued_at'))
                             ->disabled(),
                         Forms\Components\TextInput::make('due_date')
-                            ->label('Due Date')
+                            ->label(__('messages.due_date'))
                             ->disabled(),
                     ])->columns(2),
-                Forms\Components\Section::make('Update Status')
+                Forms\Components\Section::make(__('filament.sections.update_status'))
                     ->schema([
                         Forms\Components\Select::make('status')
-                            ->label('Status')
+                            ->label(__('messages.status'))
                             ->options(ViolationStatus::class)
                             ->enum(ViolationStatus::class)
                             ->required(),
@@ -72,37 +87,48 @@ class TrafficViolationResource extends Resource
                 Tables\Columns\TextColumn::make('id')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('citizen.full_name')
-                    ->label('Citizen')
+                    ->label(__('filament.columns.citizen'))
                     ->searchable(),
+                Tables\Columns\TextColumn::make('citizen.national_id')
+                    ->label(__('messages.national_id'))
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('vehicle.plate_number')
-                    ->label('Vehicle Plate'),
+                    ->label(__('messages.plate_number')),
                 Tables\Columns\TextColumn::make('police.full_name')
-                    ->label('Officer')
+                    ->label(__('messages.officer'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('violation_type')
+                    ->label(__('messages.violation_type'))
                     ->badge()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('fine_amount')
-                    ->label('Amount (SAR)')
+                    ->label(__('messages.fine_amount') . ' (SAR)')
                     ->money('SAR')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
+                    ->label(__('messages.status'))
                     ->badge()
                     ->color(fn(ViolationStatus $state): string => $state->color()),
                 Tables\Columns\TextColumn::make('issued_at')
+                    ->label(__('messages.issued_at'))
                     ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('due_date')
+                    ->label(__('messages.due_date'))
                     ->date()
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
+                    ->label(__('messages.status'))
                     ->options(ViolationStatus::class),
                 Tables\Filters\Filter::make('issued_at')
                     ->form([
-                        Forms\Components\DatePicker::make('issued_from'),
-                        Forms\Components\DatePicker::make('issued_until'),
+                        Forms\Components\DatePicker::make('issued_from')
+                            ->label(__('filament.filters.from')),
+                        Forms\Components\DatePicker::make('issued_until')
+                            ->label(__('filament.filters.until')),
                     ])
                     ->query(function ($query, array $data) {
                         return $query

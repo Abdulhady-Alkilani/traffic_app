@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Police\Resources;
 
 use App\Enums\ReportStatus;
@@ -18,7 +20,20 @@ class AssignedReportResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-flag';
 
-    protected static ?string $navigationLabel = 'Assigned Reports';
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.navigation.assigned_reports');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('filament.resources.report.label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament.navigation.assigned_reports');
+    }
 
     public static function canCreate(): bool
     {
@@ -29,22 +44,28 @@ class AssignedReportResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Report Details')
+                Forms\Components\Section::make(__('filament.sections.report_details'))
                     ->schema([
                         Forms\Components\TextInput::make('report_type')
+                            ->label(__('messages.report_type'))
                             ->disabled(),
                         Forms\Components\Textarea::make('description')
+                            ->label(__('messages.description'))
                             ->disabled(),
                         Forms\Components\TextInput::make('location_text')
+                            ->label(__('messages.location'))
                             ->disabled(),
                         Forms\Components\TextInput::make('latitude')
+                            ->label(__('messages.coordinates'))
                             ->disabled(),
                         Forms\Components\TextInput::make('longitude')
+                            ->label(__('messages.coordinates'))
                             ->disabled(),
                     ])->columns(2),
-                Forms\Components\Section::make('Update Status')
+                Forms\Components\Section::make(__('filament.sections.update_status'))
                     ->schema([
                         Forms\Components\Select::make('status')
+                            ->label(__('messages.status'))
                             ->required()
                             ->options(ReportStatus::class)
                             ->enum(ReportStatus::class),
@@ -58,42 +79,56 @@ class AssignedReportResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->sortable(),
+                Tables\Columns\ImageColumn::make('image_url')
+                    ->label(__('messages.image'))
+                    ->circular()
+                    ->defaultImageUrl(fn() => asset('images/default-report.png'))
+                    ->visible(fn() => false),
                 Tables\Columns\TextColumn::make('citizen.full_name')
-                    ->label('Citizen')
+                    ->label(__('filament.columns.citizen'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('report_type')
+                    ->label(__('messages.report_type'))
                     ->badge()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status')
+                    ->label(__('messages.status'))
                     ->badge()
-                    ->color(fn (ReportStatus $state): string => $state->color())
+                    ->color(fn(ReportStatus $state): string => $state->color())
                     ->searchable(),
+                Tables\Columns\TextColumn::make('assigned_department')
+                    ->label(__('filament.columns.assigned_department'))
+                    ->badge()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('filament.columns.created_at'))
                     ->dateTime()
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
+                    ->label(__('messages.status'))
                     ->options(ReportStatus::class),
                 Tables\Filters\Filter::make('created_at')
                     ->form([
-                        Forms\Components\DatePicker::make('created_from'),
-                        Forms\Components\DatePicker::make('created_until'),
+                        Forms\Components\DatePicker::make('created_from')
+                            ->label(__('filament.filters.from')),
+                        Forms\Components\DatePicker::make('created_until')
+                            ->label(__('filament.filters.until')),
                     ])
                     ->query(function ($query, array $data) {
                         return $query
-                            ->when($data['created_from'], fn ($q) => $q->whereDate('created_at', '>=', $data['created_from']))
-                            ->when($data['created_until'], fn ($q) => $q->whereDate('created_at', '<=', $data['created_until']));
+                            ->when($data['created_from'], fn($q) => $q->whereDate('created_at', '>=', $data['created_from']))
+                            ->when($data['created_until'], fn($q) => $q->whereDate('created_at', '<=', $data['created_until']));
                     }),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
                 Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make(),
             ])
-            ->bulkActions([
-                //
-            ])
+            ->bulkActions([])
             ->defaultSort('created_at', 'desc')
+            ->poll('10s')
             ->modifyQueryUsing(function ($query) {
                 $user = auth()->user();
                 if ($user && $user->policeData) {

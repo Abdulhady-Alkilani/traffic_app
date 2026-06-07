@@ -17,6 +17,7 @@ return [
         'reports' => 'البلاغات',
         'activity_logs' => 'سجل النشاط',
         'assigned_reports' => 'البلاغات المسندة',
+        'violations' => 'المخالفات',
     ],
     'resources' => [
         'user' => [
@@ -35,11 +36,40 @@ return [
             'label' => 'سجل نشاط',
             'plural_label' => 'سجلات النشاط',
         ],
+        'traffic_violation' => [
+            'label' => 'مخالفة مرورية',
+            'plural_label' => 'المخالفات المرورية',
+        ],
+        'assigned_report' => [
+            'label' => 'بلاغ مسند',
+            'plural_label' => 'البلاغات المسندة',
+        ],
+    ],
+    'sections' => [
+        'user_information' => 'معلومات المستخدم',
+        'report_details' => 'تفاصيل البلاغ',
+        'violation_details' => 'تفاصيل المخالفة',
+        'update_status' => 'تحديث الحالة',
     ],
     'columns' => [
         'status' => 'الحالة',
         'created_at' => 'تاريخ الإنشاء',
         'updated_at' => 'تاريخ التحديث',
+        'role' => 'الدور',
+        'is_active' => 'نشط',
+        'citizen' => 'المواطن',
+        'admin' => 'المشرف',
+        'owner' => 'المالك',
+        'assigned_department' => 'القسم المسند',
+        'action_type' => 'نوع الإجراء',
+        'target_table' => 'الجدول المستهدف',
+        'badge_number' => 'رقم الشارة',
+        'full_name' => 'الاسم الكامل',
+        'rank' => 'الرتبة',
+        'department' => 'القسم',
+        'national_id' => 'رقم الهوية',
+        'phone' => 'رقم الهاتف',
+        'blood_type' => 'فصيلة الدم',
     ],
     'actions' => [
         'create' => 'إنشاء',
@@ -48,6 +78,21 @@ return [
         'view' => 'عرض',
         'save' => 'حفظ',
         'cancel' => 'إلغاء',
+    ],
+    'filters' => [
+        'from' => 'من',
+        'until' => 'إلى',
+    ],
+    'widgets' => [
+        'total_users' => 'إجمالي المستخدمين',
+        'all_registered_users' => 'جميع المستخدمين المسجلين',
+        'total_reports' => 'إجمالي البلاغات',
+        'all_submitted_reports' => 'جميع البلاغات المقدمة',
+        'unresolved_reports' => 'البلاغات غير المحلولة',
+        'reports_pending' => 'بلاغات بانتظار الحل',
+        'outstanding_fines' => 'غرامات مخالفات معلقة',
+        'violations_issued_week' => 'المخالفات الصادرة هذا الأسبوع',
+        'reports_by_department' => 'البلاغات حسب القسم',
     ],
     'pagination' => [
         'previous' => 'السابق',
@@ -63,4 +108,30 @@ return [
     ],
     'search' => 'بحث...',
     'no_results' => 'لا توجد نتائج.',
+    'relation_managers' => [
+        'police_data' => 'بيانات الشرطة',
+        'citizen_data' => 'بيانات المواطن',
+        'vehicles' => 'المركبات',
+        'violations' => 'المخالفات',
+        'reports' => 'البلاغات',
+        'vehicle_details' => 'تفاصيل المركبة',
+    ],
+    'enums' => [
+        'violation_status' => [
+            'unpaid' => 'غير مدفوعة',
+            'paid' => 'مدفوعة',
+            'canceled' => 'ملغاة',
+        ],
+        'report_status' => [
+            'new' => 'جديد',
+            'in_progress' => 'قيد المعالجة',
+            'resolved' => 'تم الحل',
+            'rejected' => 'مرفوض',
+        ],
+        'department' => [
+            'highway_patrol' => 'دورية الطرق',
+            'traffic_police' => 'الشرطة المرورية',
+            'local_police' => 'الشرطة المحلية',
+        ],
+    ],
 ];

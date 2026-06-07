@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Police\Resources\AssignedReportResource\Pages;
 
 use App\Enums\ViolationStatus;
 use App\Filament\Police\Resources\AssignedReportResource;
-use App\Models\TrafficViolation;
+use App\Services\ViolationService;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Notifications\Notification;
@@ -18,51 +20,51 @@ class ViewAssignedReport extends ViewRecord
     {
         return [
             Action::make('issueViolation')
-                ->label('Issue Violation')
+                ->label(__('messages.issue_violation'))
                 ->icon('heroicon-o-exclamation-triangle')
                 ->color('danger')
-                ->modalHeading('Issue Violation')
-                ->modalSubmitActionLabel('Issue')
+                ->modalHeading(__('messages.issue_violation'))
+                ->modalSubmitActionLabel(__('filament.actions.create'))
                 ->form([
+                    Forms\Components\Hidden::make('citizen_id')
+                        ->default($this->record->citizen_id),
+                    Forms\Components\Hidden::make('vehicle_id')
+                        ->default($this->record->vehicle_id),
+                    Forms\Components\Hidden::make('report_id')
+                        ->default($this->record->id),
                     Forms\Components\Select::make('violation_type')
-                        ->label('Violation Type')
+                        ->label(__('messages.violation_type'))
                         ->options([
-                            'speeding' => 'Speeding',
-                            'reckless_driving' => 'Reckless Driving',
-                            'red_light' => 'Red Light',
-                            'illegal_parking' => 'Illegal Parking',
-                            'no_seatbelt' => 'No Seatbelt',
-                            'using_phone' => 'Using Phone',
+                            'speeding' => __('messages.speeding'),
+                            'reckless_driving' => __('messages.reckless_driving'),
+                            'red_light' => __('messages.red_light'),
+                            'illegal_parking' => __('messages.illegal_parking'),
+                            'no_seatbelt' => __('messages.no_seatbelt'),
+                            'using_phone' => __('messages.using_phone'),
                         ])
                         ->required(),
                     Forms\Components\Textarea::make('description')
+                        ->label(__('messages.description'))
                         ->maxLength(500),
                     Forms\Components\TextInput::make('fine_amount')
-                        ->label('Fine Amount (SAR)')
+                        ->label(__('messages.fine_amount') . ' (SAR)')
                         ->numeric()
                         ->minValue(0.01)
                         ->required(),
                     Forms\Components\DatePicker::make('due_date')
-                        ->label('Due Date')
+                        ->label(__('messages.due_date'))
                         ->minDate(now())
                         ->required(),
                 ])
-                ->action(function (array $data) {
-                    TrafficViolation::create([
-                        'citizen_id' => $this->record->citizen_id,
-                        'vehicle_id' => $this->record->vehicle_id,
-                        'police_id' => auth()->user()->policeData->id,
-                        'report_id' => $this->record->id,
-                        'violation_type' => $data['violation_type'],
-                        'description' => $data['description'],
-                        'fine_amount' => $data['fine_amount'],
-                        'due_date' => $data['due_date'],
-                        'status' => ViolationStatus::Unpaid,
-                        'issued_at' => now(),
-                    ]);
+                ->action(function (array $data, ViolationService $violationService) {
+                    $violationService->issueFromReport(
+                        $this->record,
+                        auth()->user()->policeData,
+                        $data
+                    );
 
                     Notification::make()
-                        ->title('Violation issued successfully')
+                        ->title(__('messages.violation_issued_success'))
                         ->success()
                         ->send();
                 }),

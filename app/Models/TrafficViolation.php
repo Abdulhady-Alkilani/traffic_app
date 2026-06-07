@@ -1,15 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Enums\ViolationStatus;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TrafficViolation extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'citizen_id',
         'vehicle_id',
@@ -33,22 +33,22 @@ class TrafficViolation extends Model
         ];
     }
 
-    public function citizen()
+    public function citizen(): BelongsTo
     {
         return $this->belongsTo(CitizenData::class, 'citizen_id');
     }
 
-    public function vehicle()
+    public function vehicle(): BelongsTo
     {
         return $this->belongsTo(Vehicle::class);
     }
 
-    public function police()
+    public function police(): BelongsTo
     {
         return $this->belongsTo(PoliceData::class, 'police_id');
     }
 
-    public function report()
+    public function report(): BelongsTo
     {
         return $this->belongsTo(Report::class);
     }

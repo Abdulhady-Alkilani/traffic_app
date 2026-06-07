@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Admin\Widgets;
 
 use App\Enums\ReportStatus;
@@ -14,24 +16,24 @@ class StatsOverview extends BaseWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Total Users', User::count())
-                ->description('All registered users')
+            Stat::make(__('filament.widgets.total_users'), User::count())
+                ->description(__('filament.widgets.all_registered_users'))
                 ->descriptionIcon('heroicon-m-user-group')
                 ->color('success'),
-            Stat::make('Total Reports', Report::count())
-                ->description('All submitted reports')
+            Stat::make(__('filament.widgets.total_reports'), Report::count())
+                ->description(__('filament.widgets.all_submitted_reports'))
                 ->descriptionIcon('heroicon-m-document-text')
                 ->color('info'),
-            Stat::make('Unresolved Reports', Report::whereNotIn('status', [ReportStatus::Resolved->value, ReportStatus::Rejected->value])->count())
-                ->description('Reports pending resolution')
+            Stat::make(__('filament.widgets.unresolved_reports'), Report::whereNotIn('status', [ReportStatus::Resolved->value, ReportStatus::Rejected->value])->count())
+                ->description(__('filament.widgets.reports_pending'))
                 ->descriptionIcon('heroicon-m-exclamation-triangle')
                 ->color('danger'),
-            Stat::make('Total Unpaid Fines (SAR)', number_format(TrafficViolation::where('status', 'unpaid')->sum('fine_amount'), 2))
-                ->description('Outstanding violation fines')
+            Stat::make(__('messages.total_unpaid_fines'), number_format((float) TrafficViolation::where('status', 'unpaid')->sum('fine_amount'), 2))
+                ->description(__('filament.widgets.outstanding_fines'))
                 ->descriptionIcon('heroicon-m-currency-dollar')
                 ->color('danger'),
-            Stat::make('Violations This Week', TrafficViolation::where('created_at', '>=', now()->startOfWeek())->count())
-                ->description('Violations issued this week')
+            Stat::make(__('messages.violations_this_week'), TrafficViolation::where('created_at', '>=', now()->startOfWeek())->count())
+                ->description(__('filament.widgets.violations_issued_week'))
                 ->descriptionIcon('heroicon-m-exclamation-triangle')
                 ->color('warning'),
         ];

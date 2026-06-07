@@ -39,8 +39,9 @@ Register a new account at `/register` or use one of the seeded citizen accounts.
 | Citizens | 5 |
 | Police Officers | 3 |
 | Admins | 1 |
-| Vehicles | 11 |
+| Vehicles | 12 |
 | Reports | 50 |
+| Traffic Violations | 22 |
 
 ---
 

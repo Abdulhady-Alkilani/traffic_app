@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Enums;
 
 enum Department: string
@@ -10,10 +12,6 @@ enum Department: string
 
     public function label(): string
     {
-        return match($this) {
-            self::HighwayPatrol => 'Highway Patrol',
-            self::TrafficPolice => 'Traffic Police',
-            self::LocalPolice => 'Local Police',
-        };
+        return __('filament.enums.department.' . $this->value);
     }
 }

@@ -1,14 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Vehicle extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'citizen_id',
         'plate_number',
@@ -18,17 +19,17 @@ class Vehicle extends Model
         'color',
     ];
 
-    public function citizen()
+    public function citizen(): BelongsTo
     {
         return $this->belongsTo(CitizenData::class, 'citizen_id');
     }
 
-    public function reports()
+    public function reports(): HasMany
     {
         return $this->hasMany(Report::class);
     }
 
-    public function violations()
+    public function violations(): HasMany
     {
         return $this->hasMany(TrafficViolation::class);
     }

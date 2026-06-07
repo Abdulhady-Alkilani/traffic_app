@@ -56,6 +56,7 @@ return [
     'coordinates' => 'Coordinates',
     'detect_location' => 'Detect My Location',
     'location_description' => 'Location description (optional)',
+    'location_denied' => 'Could not detect your location. Please enter a location description manually.',
     'select_vehicle' => 'Select Vehicle (optional)',
     'no_vehicle' => '-- No Vehicle --',
     'image' => 'Photo (optional)',
@@ -81,6 +82,7 @@ return [
     'payment_success' => 'Payment processed successfully!',
     'no_violations' => 'No violations found.',
     'issue_violation' => 'Issue Violation',
+    'violation_issued_success' => 'Violation issued successfully.',
     'speeding' => 'Speeding',
     'reckless_driving' => 'Reckless Driving',
     'red_light' => 'Red Light',
@@ -90,4 +92,27 @@ return [
     'officer' => 'Officer',
     'total_unpaid_fines' => 'Total Unpaid Fines (SAR)',
     'violations_this_week' => 'Violations Issued This Week',
+    'click_or_drag' => 'Click or drag an image here',
+    'min_chars' => 'min characters',
+    'report_success_title' => 'Report Submitted Successfully!',
+    'report_success_message' => 'Your report will be reviewed and routed to the appropriate department.',
+    'tracking_number' => 'Tracking Number',
+    'back_to_dashboard' => 'Back to Dashboard',
+
+    // Welcome page
+    'welcome_hero_text' => 'A smart system for reporting traffic incidents and tracking road safety across all departments.',
+    'features_title' => 'Key Features',
+    'feature_safety_title' => 'Road Safety',
+    'feature_safety_desc' => 'Advanced traffic monitoring and safety reporting system to keep roads safe for everyone.',
+    'feature_reports_title' => 'Smart Reports',
+    'feature_reports_desc' => 'Submit reports with GPS auto-detection and automatic routing to the correct department.',
+    'feature_tracking_title' => 'Real-time Tracking',
+    'feature_tracking_desc' => 'Track your reports in real-time and get notified when the status changes.',
+    'stat_reports' => 'Reports Submitted',
+    'stat_departments' => 'Departments',
+    'stat_availability' => 'Available',
+    'stat_languages' => 'Languages',
+
+    // General
+    'error_occurred' => 'An error occurred',
 ];

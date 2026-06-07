@@ -56,6 +56,7 @@ return [
     'coordinates' => 'الإحداثيات',
     'detect_location' => 'تحديد موقعي',
     'location_description' => 'وصف الموقع (اختياري)',
+    'location_denied' => 'لم نتمكن من تحديد موقعك. يرجى إدخال وصف الموقع يدوياً.',
     'select_vehicle' => 'اختر المركبة (اختياري)',
     'no_vehicle' => '-- بدون مركبة --',
     'image' => 'صورة (اختياري)',
@@ -81,6 +82,7 @@ return [
     'payment_success' => 'تمت عملية الدفع بنجاح!',
     'no_violations' => 'لا توجد مخالفات.',
     'issue_violation' => 'إصدار مخالفة',
+    'violation_issued_success' => 'تم إصدار المخالفة بنجاح.',
     'speeding' => 'تجاوز السرعة',
     'reckless_driving' => 'قيادة متهورة',
     'red_light' => 'قطع إشارة حمراء',
@@ -90,4 +92,27 @@ return [
     'officer' => 'الضابط',
     'total_unpaid_fines' => 'إجمالي الغرامات غير المدفوعة (ر.س)',
     'violations_this_week' => 'المخالفات الصادرة هذا الأسبوع',
+    'click_or_drag' => 'اضغط أو اسحب صورة هنا',
+    'min_chars' => 'حرف كحد أدنى',
+    'report_success_title' => 'تم إرسال البلاغ بنجاح!',
+    'report_success_message' => 'سيتم مراجعة بلاغك وتوجيهه للقسم المختص.',
+    'tracking_number' => 'رقم التتبع',
+    'back_to_dashboard' => 'العودة للوحة التحكم',
+
+    // صفحة الترحيب
+    'welcome_hero_text' => 'نظام ذكي للإبلاغ عن الحوادث المرورية ومتابعة السلامة على الطرق عبر جميع الأقسام.',
+    'features_title' => 'المميزات الرئيسية',
+    'feature_safety_title' => 'السلامة المرورية',
+    'feature_safety_desc' => 'نظام متقدم لمراقبة حركة المرور والإبلاغ عن السلامة للحفاظ على أمان الطرق للجميع.',
+    'feature_reports_title' => 'بلاغات ذكية',
+    'feature_reports_desc' => 'أرسل البلاغات مع الكشف التلقائي عن الموقع والتوجيه الآلي للقسم المختص.',
+    'feature_tracking_title' => 'تتبع فوري',
+    'feature_tracking_desc' => 'تابع بلاغاتك في الوقت الفعلي واحصل على إشعارات عند تغيير الحالة.',
+    'stat_reports' => 'بلاغ مقدم',
+    'stat_departments' => 'أقسام',
+    'stat_availability' => 'متاح',
+    'stat_languages' => 'لغات',
+
+    // عام
+    'error_occurred' => 'حدث خطأ',
 ];

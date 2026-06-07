@@ -1,19 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class LoginController extends Controller
 {
-    public function showLoginForm()
+    public function showLoginForm(): View
     {
         return view('auth.login');
     }
 
-    public function login(Request $request)
+    public function login(Request $request): RedirectResponse
     {
         $credentials = $request->validate([
             'email' => ['required', 'email'],
@@ -26,14 +30,14 @@ class LoginController extends Controller
             $user = Auth::user();
 
             if ($user->isAdmin()) {
-                return redirect()->intended('/admin');
+                return redirect('/admin');
             }
 
             if ($user->isPolice()) {
-                return redirect()->intended('/police');
+                return redirect('/police');
             }
 
-            return redirect()->intended(route('citizen.dashboard'));
+            return redirect(route('citizen.dashboard'));
         }
 
         return back()->withErrors([
@@ -41,7 +45,7 @@ class LoginController extends Controller
         ])->onlyInput('email');
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request): RedirectResponse
     {
         Auth::logout();
 

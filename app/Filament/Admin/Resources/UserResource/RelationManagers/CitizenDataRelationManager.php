@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Admin\Resources\UserResource\RelationManagers;
 
 use Filament\Forms;
@@ -12,24 +14,31 @@ class CitizenDataRelationManager extends RelationManager
 {
     protected static string $relationship = 'citizenData';
 
-    protected static ?string $title = 'Citizen Data';
+    public static function getTitle($ownerRecord, string $pageClass): string
+    {
+        return __('filament.relation_managers.citizen_data');
+    }
 
     public function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('national_id')
+                    ->label(__('filament.columns.national_id'))
                     ->required()
                     ->maxLength(255)
                     ->unique(ignoreRecord: true),
                 Forms\Components\TextInput::make('full_name')
+                    ->label(__('filament.columns.full_name'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('phone')
+                    ->label(__('filament.columns.phone'))
                     ->required()
                     ->tel()
                     ->maxLength(255),
                 Forms\Components\Select::make('blood_type')
+                    ->label(__('filament.columns.blood_type'))
                     ->required()
                     ->options([
                         'A+' => 'A+', 'A-' => 'A-',
@@ -44,10 +53,14 @@ class CitizenDataRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('national_id'),
-                Tables\Columns\TextColumn::make('full_name'),
-                Tables\Columns\TextColumn::make('phone'),
-                Tables\Columns\TextColumn::make('blood_type'),
+                Tables\Columns\TextColumn::make('national_id')
+                    ->label(__('filament.columns.national_id')),
+                Tables\Columns\TextColumn::make('full_name')
+                    ->label(__('filament.columns.full_name')),
+                Tables\Columns\TextColumn::make('phone')
+                    ->label(__('filament.columns.phone')),
+                Tables\Columns\TextColumn::make('blood_type')
+                    ->label(__('filament.columns.blood_type')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Police\Resources;
 
 use App\Enums\ViolationStatus;
@@ -19,25 +21,43 @@ class TrafficViolationResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-exclamation-triangle';
 
-    protected static ?string $navigationLabel = 'Traffic Violations';
+    public static function getNavigationLabel(): string
+    {
+        return __('messages.violations');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('messages.violation');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('messages.violations');
+    }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Violation Details')
+                Forms\Components\Section::make(__('filament.sections.violation_details'))
                     ->schema([
                         Forms\Components\Select::make('citizen_id')
-                            ->label('Citizen')
-                            ->options(CitizenData::all()->pluck('full_name', 'id')->mapWithKeys(fn($name, $id) => [
-                                $id => CitizenData::find($id)?->full_name . ' (' . CitizenData::find($id)?->national_id . ')',
-                            ]))
+                            ->label(__('filament.columns.citizen'))
+                            ->options(
+                                CitizenData::query()
+                                    ->with('user')
+                                    ->get()
+                                    ->mapWithKeys(fn(CitizenData $citizen) => [
+                                        $citizen->id => "{$citizen->full_name} ({$citizen->national_id})",
+                                    ])
+                            )
                             ->searchable()
                             ->required()
                             ->live()
                             ->reactive(),
                         Forms\Components\Select::make('vehicle_id')
-                            ->label('Vehicle')
+                            ->label(__('messages.vehicle'))
                             ->options(function (callable $get) {
                                 $citizenId = $get('citizen_id');
                                 if (!$citizenId) {
@@ -47,25 +67,26 @@ class TrafficViolationResource extends Resource
                             })
                             ->searchable(),
                         Forms\Components\Select::make('violation_type')
-                            ->label('Violation Type')
+                            ->label(__('messages.violation_type'))
                             ->options([
-                                'speeding' => 'Speeding',
-                                'reckless_driving' => 'Reckless Driving',
-                                'red_light' => 'Red Light',
-                                'illegal_parking' => 'Illegal Parking',
-                                'no_seatbelt' => 'No Seatbelt',
-                                'using_phone' => 'Using Phone',
+                                'speeding' => __('messages.speeding'),
+                                'reckless_driving' => __('messages.reckless_driving'),
+                                'red_light' => __('messages.red_light'),
+                                'illegal_parking' => __('messages.illegal_parking'),
+                                'no_seatbelt' => __('messages.no_seatbelt'),
+                                'using_phone' => __('messages.using_phone'),
                             ])
                             ->required(),
                         Forms\Components\Textarea::make('description')
+                            ->label(__('messages.description'))
                             ->maxLength(500),
                         Forms\Components\TextInput::make('fine_amount')
-                            ->label('Fine Amount (SAR)')
+                            ->label(__('messages.fine_amount') . ' (SAR)')
                             ->numeric()
                             ->minValue(0.01)
                             ->required(),
                         Forms\Components\DatePicker::make('due_date')
-                            ->label('Due Date')
+                            ->label(__('messages.due_date'))
                             ->minDate(now())
                             ->required(),
                     ])->columns(2),
@@ -79,26 +100,30 @@ class TrafficViolationResource extends Resource
                 Tables\Columns\TextColumn::make('id')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('citizen.full_name')
-                    ->label('Citizen')
+                    ->label(__('filament.columns.citizen'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('vehicle.plate_number')
-                    ->label('Vehicle Plate'),
+                    ->label(__('messages.plate_number')),
                 Tables\Columns\TextColumn::make('violation_type')
+                    ->label(__('messages.violation_type'))
                     ->badge()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('fine_amount')
-                    ->label('Amount (SAR)')
+                    ->label(__('messages.fine_amount') . ' (SAR)')
                     ->money('SAR')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
+                    ->label(__('messages.status'))
                     ->badge()
                     ->color(fn(ViolationStatus $state): string => $state->color()),
                 Tables\Columns\TextColumn::make('issued_at')
+                    ->label(__('messages.issued_at'))
                     ->dateTime()
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
+                    ->label(__('messages.status'))
                     ->options(ViolationStatus::class),
             ])
             ->actions([

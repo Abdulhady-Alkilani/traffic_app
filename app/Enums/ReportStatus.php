@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Enums;
 
 enum ReportStatus: string
@@ -11,17 +13,12 @@ enum ReportStatus: string
 
     public function label(): string
     {
-        return match($this) {
-            self::New => 'New',
-            self::InProgress => 'In Progress',
-            self::Resolved => 'Resolved',
-            self::Rejected => 'Rejected',
-        };
+        return __('filament.enums.report_status.' . $this->value);
     }
 
     public function color(): string
     {
-        return match($this) {
+        return match ($this) {
             self::New => 'gray',
             self::InProgress => 'warning',
             self::Resolved => 'success',

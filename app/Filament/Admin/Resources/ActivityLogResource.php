@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\ActivityLogResource\Pages;
@@ -15,7 +17,22 @@ class ActivityLogResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clock';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 5;
+
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.navigation.activity_logs');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('filament.resources.activity_log.label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament.resources.activity_log.plural_label');
+    }
 
     public static function canCreate(): bool
     {
@@ -24,10 +41,7 @@ class ActivityLogResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                //
-            ]);
+        return $form->schema([]);
     }
 
     public static function table(Table $table): Table
@@ -35,11 +49,12 @@ class ActivityLogResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('admin.full_name')
-                    ->label('Admin')
+                    ->label(__('filament.columns.admin'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('action_type')
+                    ->label(__('filament.columns.action_type'))
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'create' => 'success',
                         'update' => 'warning',
                         'delete' => 'danger',
@@ -47,36 +62,39 @@ class ActivityLogResource extends Resource
                     })
                     ->searchable(),
                 Tables\Columns\TextColumn::make('target_table')
+                    ->label(__('filament.columns.target_table'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('description')
+                    ->label(__('messages.description'))
                     ->limit(50)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('filament.columns.created_at'))
                     ->dateTime()
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('action_type')
+                    ->label(__('filament.columns.action_type'))
                     ->options([
-                        'create' => 'Create',
-                        'update' => 'Update',
-                        'delete' => 'Delete',
-                        'view' => 'View',
+                        'create' => __('filament.actions.create'),
+                        'update' => __('filament.actions.edit'),
+                        'delete' => __('filament.actions.delete'),
+                        'view' => __('filament.actions.view'),
                     ]),
                 Tables\Filters\SelectFilter::make('target_table')
+                    ->label(__('filament.columns.target_table'))
                     ->options([
-                        'users' => 'Users',
-                        'reports' => 'Reports',
-                        'vehicles' => 'Vehicles',
-                        'citizens_data' => 'Citizens Data',
+                        'users' => __('filament.navigation.users'),
+                        'reports' => __('filament.navigation.reports'),
+                        'vehicles' => __('filament.navigation.vehicles'),
+                        'citizens_data' => __('filament.columns.citizen'),
                     ]),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
             ])
-            ->bulkActions([
-                //
-            ])
+            ->bulkActions([])
             ->defaultSort('created_at', 'desc');
     }
 

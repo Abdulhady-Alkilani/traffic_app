@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Enums;
 
 enum ViolationStatus: string
@@ -10,11 +12,12 @@ enum ViolationStatus: string
 
     public function label(): string
     {
-        return match ($this) {
-            self::Unpaid => 'Unpaid',
-            self::Paid => 'Paid',
-            self::Canceled => 'Canceled',
-        };
+        return __('filament.enums.violation_status.' . $this->value);
+    }
+
+    public function isUnpaid(): bool
+    {
+        return $this === self::Unpaid;
     }
 
     public function color(): string

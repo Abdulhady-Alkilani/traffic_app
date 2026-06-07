@@ -1,19 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Enums\Department;
 use App\Enums\ReportStatus;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Scopes\DepartmentScope;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Report extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'citizen_id',
         'vehicle_id',
+        'reported_vehicle_plate',
         'assigned_department',
         'report_type',
         'description',
@@ -21,6 +24,7 @@ class Report extends Model
         'longitude',
         'location_text',
         'image_url',
+        'video_url',
         'status',
     ];
 
@@ -34,17 +38,17 @@ class Report extends Model
         ];
     }
 
-    public function citizen()
+    public function citizen(): BelongsTo
     {
         return $this->belongsTo(CitizenData::class, 'citizen_id');
     }
 
-    public function vehicle()
+    public function vehicle(): BelongsTo
     {
         return $this->belongsTo(Vehicle::class);
     }
 
-    public function violations()
+    public function violations(): HasMany
     {
         return $this->hasMany(TrafficViolation::class);
     }

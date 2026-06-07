@@ -1,14 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ActivityLog extends Model
 {
-    use HasFactory;
-
     protected $table = 'activity_logs';
 
     protected $fillable = [
@@ -18,7 +18,7 @@ class ActivityLog extends Model
         'description',
     ];
 
-    public function admin()
+    public function admin(): BelongsTo
     {
         return $this->belongsTo(AdminData::class, 'admin_id');
     }
