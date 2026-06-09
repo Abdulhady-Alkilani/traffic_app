@@ -36,19 +36,11 @@
                 @csrf
                 @method('PUT')
 
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">{{ __('الاسم الأول') }}</label>
-                        <input type="text" name="first_name" value="{{ old('first_name', $user->citizenData->first_name ?? '') }}" required
-                            class="w-full bg-gray-50 dark:bg-slate-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block p-2.5">
-                        @error('first_name') <p class="mt-1 text-sm text-rose-500">{{ $message }}</p> @enderror
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">{{ __('الكنية') }}</label>
-                        <input type="text" name="last_name" value="{{ old('last_name', $user->citizenData->last_name ?? '') }}" required
-                            class="w-full bg-gray-50 dark:bg-slate-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block p-2.5">
-                        @error('last_name') <p class="mt-1 text-sm text-rose-500">{{ $message }}</p> @enderror
-                    </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">{{ __('الاسم الكامل') }}</label>
+                    <input type="text" name="full_name" value="{{ old('full_name', $user->citizenData->full_name ?? '') }}" required
+                        class="w-full bg-gray-50 dark:bg-slate-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block p-2.5">
+                    @error('full_name') <p class="mt-1 text-sm text-rose-500">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
@@ -60,9 +52,9 @@
 
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">{{ __('رقم الهاتف') }}</label>
-                    <input type="text" name="phone_number" value="{{ old('phone_number', $user->citizenData->phone_number ?? '') }}"
+                    <input type="text" name="phone" value="{{ old('phone', $user->citizenData->phone ?? '') }}"
                         class="w-full bg-gray-50 dark:bg-slate-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block p-2.5" dir="ltr">
-                    @error('phone_number') <p class="mt-1 text-sm text-rose-500">{{ $message }}</p> @enderror
+                    @error('phone') <p class="mt-1 text-sm text-rose-500">{{ $message }}</p> @enderror
                 </div>
                 
                 <div>

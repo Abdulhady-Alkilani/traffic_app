@@ -88,6 +88,7 @@ class ReportController extends Controller
             'reported_vehicle_plate' => $reportedPlate,
             'report_type' => $request->validated('report_type'),
             'description' => $request->validated('description'),
+            'location_type' => $request->validated('location_type'),
             'latitude' => $request->validated('latitude'),
             'longitude' => $request->validated('longitude'),
             'location_text' => $request->validated('location_text'),
@@ -103,8 +104,15 @@ class ReportController extends Controller
 
     public function show(\App\Models\Report $report)
     {
-        // Ensure the citizen owns the report
-        if ($report->citizen_id !== Auth::user()->citizenData->id) {
+        $citizenId = Auth::user()->citizenData->id;
+
+        // Ensure the citizen owns the report or is the subject of a violation from this report
+        $isReporter = $report->citizen_id === $citizenId;
+        $isViolator = \App\Models\TrafficViolation::where('report_id', $report->id)
+            ->where('citizen_id', $citizenId)
+            ->exists();
+
+        if (!$isReporter && !$isViolator) {
             abort(403);
         }
 
@@ -118,7 +126,7 @@ class ReportController extends Controller
         $citizenData = Auth::user()->citizenData;
         $search = $request->get('q', '');
 
-        $vehicles = Vehicle::where('citizen_id', $citizenData->id)
+        $vehicles = Vehicle::where('citizen_id', '!=', $citizenData->id)
             ->where(function ($query) use ($search) {
                 $query->where('plate_number', 'like', "%{$search}%")
                       ->orWhere('make', 'like', "%{$search}%");

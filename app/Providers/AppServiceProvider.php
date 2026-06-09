@@ -21,5 +21,15 @@ class AppServiceProvider extends ServiceProvider
             ReportCreated::class,
             LogReportCreation::class,
         );
+
+        Event::listen(\BezhanSalleh\FilamentLanguageSwitch\Events\LocaleChanged::class, function ($event) {
+            session()->save();
+        });
+
+        \Illuminate\Support\Facades\Gate::before(function (\App\Models\User $user, string $ability) {
+            if ($user->isAdmin()) {
+                return true;
+            }
+        });
     }
 }

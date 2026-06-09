@@ -61,6 +61,17 @@ class AssignedReportResource extends Resource
                         Forms\Components\TextInput::make('longitude')
                             ->label(__('messages.coordinates'))
                             ->disabled(),
+                        Forms\Components\FileUpload::make('image_url')
+                            ->label(__('الصور المرفقة'))
+                            ->image()
+                            ->disabled()
+                            ->columnSpanFull()
+                            ->visible(fn ($record) => $record && $record->image_url),
+                        Forms\Components\Placeholder::make('video_url')
+                            ->label(__('الفيديو المرفق'))
+                            ->content(fn ($record) => $record && $record->video_url ? new \Illuminate\Support\HtmlString('<video controls class="w-full max-h-96 rounded-lg"><source src="' . \Illuminate\Support\Facades\Storage::url($record->video_url) . '" type="video/mp4"></video>') : '-')
+                            ->columnSpanFull()
+                            ->visible(fn ($record) => $record && $record->video_url),
                     ])->columns(2),
                 Forms\Components\Section::make(__('filament.sections.update_status'))
                     ->schema([

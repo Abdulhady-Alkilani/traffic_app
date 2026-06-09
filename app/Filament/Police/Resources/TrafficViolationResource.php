@@ -81,7 +81,8 @@ class TrafficViolationResource extends Resource
                             ->label(__('messages.description'))
                             ->maxLength(500),
                         Forms\Components\TextInput::make('fine_amount')
-                            ->label(__('messages.fine_amount') . ' (SAR)')
+                            ->label(__('filament.columns.fine_amount'))
+                            ->required()
                             ->numeric()
                             ->minValue(0.01)
                             ->required(),
@@ -109,8 +110,8 @@ class TrafficViolationResource extends Resource
                     ->badge()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('fine_amount')
-                    ->label(__('messages.fine_amount') . ' (SAR)')
-                    ->money('SAR')
+                    ->label(__('messages.fine_amount') . ' (SYP)')
+                    ->money('SYP')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('messages.status'))

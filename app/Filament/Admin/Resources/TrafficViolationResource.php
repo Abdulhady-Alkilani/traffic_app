@@ -36,10 +36,6 @@ class TrafficViolationResource extends Resource
         return __('messages.violations');
     }
 
-    public static function canCreate(): bool
-    {
-        return false;
-    }
 
     public static function form(Form $form): Form
     {
@@ -47,27 +43,45 @@ class TrafficViolationResource extends Resource
             ->schema([
                 Forms\Components\Section::make(__('filament.sections.violation_details'))
                     ->schema([
-                        Forms\Components\TextInput::make('citizen.full_name')
+                        Forms\Components\Select::make('citizen_id')
+                            ->relationship('citizen', 'full_name')
                             ->label(__('filament.columns.citizen'))
-                            ->disabled(),
-                        Forms\Components\TextInput::make('vehicle.plate_number')
+                            ->searchable()
+                            ->preload()
+                            ->live()
+                            ->reactive()
+                            ->required(),
+                        Forms\Components\Select::make('vehicle_id')
                             ->label(__('messages.plate_number'))
-                            ->disabled(),
-                        Forms\Components\TextInput::make('police.full_name')
+                            ->options(function (callable $get) {
+                                $citizenId = $get('citizen_id');
+                                if (!$citizenId) {
+                                    return [];
+                                }
+                                return \App\Models\Vehicle::where('citizen_id', $citizenId)->pluck('plate_number', 'id');
+                            })
+                            ->searchable()
+                            ->preload()
+                            ->required(),
+                        Forms\Components\Select::make('police_id')
+                            ->relationship('police', 'full_name')
                             ->label(__('messages.officer'))
-                            ->disabled(),
+                            ->searchable()
+                            ->preload()
+                            ->required(),
                         Forms\Components\TextInput::make('violation_type')
                             ->label(__('messages.violation_type'))
-                            ->disabled(),
+                            ->required(),
                         Forms\Components\TextInput::make('fine_amount')
-                            ->label(__('messages.fine_amount') . ' (SAR)')
-                            ->disabled(),
-                        Forms\Components\TextInput::make('issued_at')
+                            ->label(__('messages.fine_amount') . ' (SYP)')
+                            ->required()
+                            ->numeric(),
+                        Forms\Components\DateTimePicker::make('issued_at')
                             ->label(__('messages.issued_at'))
-                            ->disabled(),
-                        Forms\Components\TextInput::make('due_date')
+                            ->required(),
+                        Forms\Components\DatePicker::make('due_date')
                             ->label(__('messages.due_date'))
-                            ->disabled(),
+                            ->required(),
                     ])->columns(2),
                 Forms\Components\Section::make(__('filament.sections.update_status'))
                     ->schema([
@@ -103,8 +117,8 @@ class TrafficViolationResource extends Resource
                     ->badge()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('fine_amount')
-                    ->label(__('messages.fine_amount') . ' (SAR)')
-                    ->money('SAR')
+                    ->label(__('messages.fine_amount') . ' (SYP)')
+                    ->money('SYP')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('messages.status'))
@@ -139,9 +153,22 @@ class TrafficViolationResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
-            ->bulkActions([])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ])
             ->defaultSort('created_at', 'desc');
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            TrafficViolationResource\RelationManagers\CitizenRelationManager::class,
+            TrafficViolationResource\RelationManagers\PoliceRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

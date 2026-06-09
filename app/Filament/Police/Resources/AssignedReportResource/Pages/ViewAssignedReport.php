@@ -47,7 +47,7 @@ class ViewAssignedReport extends ViewRecord
                         ->label(__('messages.description'))
                         ->maxLength(500),
                     Forms\Components\TextInput::make('fine_amount')
-                        ->label(__('messages.fine_amount') . ' (SAR)')
+                        ->label(__('messages.fine_amount') . ' (SYP)')
                         ->numeric()
                         ->minValue(0.01)
                         ->required(),

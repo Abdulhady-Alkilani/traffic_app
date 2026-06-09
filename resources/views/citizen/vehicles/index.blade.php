@@ -70,6 +70,7 @@
                         <th class="px-5 py-4 text-start text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('messages.plate_number') }}</th>
                         <th class="px-5 py-4 text-start text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('messages.type') }}</th>
                         <th class="px-5 py-4 text-start text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('messages.make') }}</th>
+                        <th class="px-5 py-4 text-start text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('الطراز') }}</th>
                         <th class="px-5 py-4 text-start text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('messages.year') }}</th>
                         <th class="px-5 py-4 text-start text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('messages.color') }}</th>
                         <th class="px-5 py-4 text-start text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('messages.actions') }}</th>
@@ -81,6 +82,7 @@
                         <td class="px-5 py-4 font-semibold text-gray-900 dark:text-white">{{ $vehicle->plate_number }}</td>
                         <td class="px-5 py-4 text-gray-600 dark:text-gray-300 capitalize">{{ $vehicle->vehicle_type }}</td>
                         <td class="px-5 py-4 text-gray-600 dark:text-gray-300">{{ $vehicle->make }}</td>
+                        <td class="px-5 py-4 text-gray-600 dark:text-gray-300">{{ $vehicle->model_name ?? '-' }}</td>
                         <td class="px-5 py-4 text-gray-600 dark:text-gray-300">{{ $vehicle->model_year }}</td>
                         <td class="px-5 py-4 text-gray-600 dark:text-gray-300">
                             <span class="inline-flex items-center gap-1.5" dir="ltr">
@@ -188,6 +190,45 @@
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('الطراز') }}</label>
+                            <input type="text" name="model_name" x-model="formData.model_name"
+                                class="w-full px-4 py-2.5 bg-gray-50 dark:bg-slate-800 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('messages.model_year') }}</label>
+                            <input type="number" name="model_year" x-model="formData.model_year" required min="1900" max="{{ date('Y') + 1 }}"
+                                class="w-full px-4 py-2.5 bg-gray-50 dark:bg-slate-800 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 dark:text-white">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('رقم الشاسيه') }}</label>
+                            <input type="text" name="chassis_number" x-model="formData.chassis_number"
+                                class="w-full px-4 py-2.5 bg-gray-50 dark:bg-slate-800 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('رقم المحرك') }}</label>
+                            <input type="text" name="engine_number" x-model="formData.engine_number"
+                                class="w-full px-4 py-2.5 bg-gray-50 dark:bg-slate-800 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 dark:text-white">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('تاريخ انتهاء الترخيص') }}</label>
+                            <input type="date" name="registration_expiry" x-model="formData.registration_expiry"
+                                class="w-full px-4 py-2.5 bg-gray-50 dark:bg-slate-800 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('حالة التأمين') }}</label>
+                            <select name="insurance_status" x-model="formData.insurance_status" required
+                                class="w-full px-4 py-2.5 bg-gray-50 dark:bg-slate-800 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 dark:text-white">
+                                <option value="valid">{{ __('ساري المفعول') }}</option>
+                                <option value="expired">{{ __('منتهي الصلاحية') }}</option>
+                            </select>
+                        </div>
+                        <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('messages.model_year') }}</label>
                             <input type="number" name="model_year" x-model="formData.model_year" required min="1900" max="{{ date('Y') + 1 }}"
                                 class="w-full px-4 py-2.5 bg-gray-50 dark:bg-slate-800 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 dark:text-white">
@@ -265,7 +306,12 @@
                 plate_number: '',
                 vehicle_type: 'sedan',
                 make: '',
+                model_name: '',
                 model_year: '',
+                chassis_number: '',
+                engine_number: '',
+                registration_expiry: '',
+                insurance_status: 'valid',
                 color: '#ffffff'
             },
             
@@ -276,7 +322,12 @@
                     plate_number: '',
                     vehicle_type: 'sedan',
                     make: '',
+                    model_name: '',
                     model_year: '',
+                    chassis_number: '',
+                    engine_number: '',
+                    registration_expiry: '',
+                    insurance_status: 'valid',
                     color: '#ffffff'
                 };
                 this.isModalOpen = true;
@@ -289,7 +340,12 @@
                     plate_number: vehicle.plate_number,
                     vehicle_type: vehicle.vehicle_type,
                     make: vehicle.make,
+                    model_name: vehicle.model_name || '',
                     model_year: vehicle.model_year,
+                    chassis_number: vehicle.chassis_number || '',
+                    engine_number: vehicle.engine_number || '',
+                    registration_expiry: vehicle.registration_expiry ? vehicle.registration_expiry.substring(0, 10) : '',
+                    insurance_status: vehicle.insurance_status || 'valid',
                     color: vehicle.color
                 };
                 this.isModalOpen = true;

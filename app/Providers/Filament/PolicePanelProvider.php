@@ -28,13 +28,13 @@ class PolicePanelProvider extends PanelProvider
         return $panel
             ->id('police')
             ->path('police')
-            ->login(Login::class)
             ->colors([
                 'primary' => Color::Blue,
             ])
             ->darkMode()
             ->discoverResources(in: app_path('Filament/Police/Resources'), for: 'App\\Filament\\Police\\Resources')
             ->discoverPages(in: app_path('Filament/Police/Pages'), for: 'App\\Filament\\Police\\Pages')
+            ->discoverWidgets(in: app_path('Filament/Police/Widgets'), for: 'App\\Filament\\Police\\Widgets')
             ->pages([
                 Pages\Dashboard::class,
             ])

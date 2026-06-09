@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\UserResource\Pages;
+use App\Filament\Admin\Resources\UserResource\RelationManagers\AdminDataRelationManager;
 use App\Filament\Admin\Resources\UserResource\RelationManagers\CitizenDataRelationManager;
 use App\Filament\Admin\Resources\UserResource\RelationManagers\PoliceDataRelationManager;
 use App\Filament\Admin\Resources\UserResource\RelationManagers\ReportsRelationManager;
@@ -66,11 +67,80 @@ class UserResource extends Resource
                             ->label(__('filament.columns.role'))
                             ->options(\App\Models\Role::all()->pluck('name', 'id'))
                             ->searchable()
-                            ->preload(),
+                            ->preload()
+                            ->live()
+                            ->afterStateUpdated(function (Forms\Set $set, $state) {
+                                $role = \App\Models\Role::find($state);
+                                if ($role && $role->slug === 'police') {
+                                    $set('is_active', false);
+                                } else {
+                                    $set('is_active', true);
+                                }
+                            }),
                         Forms\Components\Toggle::make('is_active')
                             ->label(__('filament.columns.is_active'))
                             ->default(true),
                     ])->columns(2),
+
+                Forms\Components\Section::make('بيانات المواطن')
+                    ->relationship('citizenData')
+                    ->schema([
+                        Forms\Components\TextInput::make('national_id')
+                            ->label('الرقم الوطني')
+                            ->required()
+                            ->numeric(),
+                        Forms\Components\TextInput::make('full_name')
+                            ->label('الاسم الكامل')
+                            ->required(),
+                        Forms\Components\TextInput::make('phone')
+                            ->label('رقم الهاتف')
+                            ->required()
+                            ->tel(),
+                        Forms\Components\Select::make('blood_type')
+                            ->label('زمرة الدم')
+                            ->options([
+                                'A+' => 'A+', 'A-' => 'A-', 'B+' => 'B+', 'B-' => 'B-', 'AB+' => 'AB+', 'AB-' => 'AB-', 'O+' => 'O+', 'O-' => 'O-',
+                            ])
+                            ->required(),
+                    ])
+                    ->visible(fn (Forms\Get $get) => \App\Models\Role::find($get('role_id'))?->slug === 'citizen')
+                    ->columns(2),
+
+                Forms\Components\Section::make('بيانات الشرطي')
+                    ->relationship('policeData')
+                    ->schema([
+                        Forms\Components\TextInput::make('badge_number')
+                            ->label('الرقم العسكري')
+                            ->required(),
+                        Forms\Components\TextInput::make('full_name')
+                            ->label('الاسم الكامل')
+                            ->required(),
+                        Forms\Components\Select::make('rank')
+                            ->label('الرتبة')
+                            ->options([
+                                'شرطي' => 'شرطي',
+                                'عريف' => 'عريف',
+                                'رقيب' => 'رقيب',
+                                'رقيب أول' => 'رقيب أول',
+                                'مساعد' => 'مساعد',
+                                'مساعد أول' => 'مساعد أول',
+                                'ملازم' => 'ملازم',
+                                'ملازم أول' => 'ملازم أول',
+                                'نقيب' => 'نقيب',
+                                'رائد' => 'رائد',
+                                'مقدم' => 'مقدم',
+                                'عقيد' => 'عقيد',
+                                'عميد' => 'عميد',
+                                'لواء' => 'لواء',
+                            ])
+                            ->required(),
+                        Forms\Components\Select::make('department')
+                            ->label('القسم')
+                            ->options(\App\Enums\Department::class)
+                            ->required(),
+                    ])
+                    ->visible(fn (Forms\Get $get) => \App\Models\Role::find($get('role_id'))?->slug === 'police')
+                    ->columns(2),
             ]);
     }
 
@@ -121,6 +191,7 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
+            AdminDataRelationManager::class,
             CitizenDataRelationManager::class,
             PoliceDataRelationManager::class,
             ReportsRelationManager::class,

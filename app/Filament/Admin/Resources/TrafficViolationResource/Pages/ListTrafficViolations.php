@@ -10,4 +10,11 @@ use Filament\Resources\Pages\ListRecords;
 class ListTrafficViolations extends ListRecords
 {
     protected static string $resource = TrafficViolationResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            \Filament\Actions\CreateAction::make(),
+        ];
+    }
 }

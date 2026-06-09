@@ -15,8 +15,17 @@ class Vehicle extends Model
         'plate_number',
         'vehicle_type',
         'make',
+        'model_name',
         'model_year',
+        'chassis_number',
+        'engine_number',
         'color',
+        'registration_expiry',
+        'insurance_status',
+    ];
+
+    protected $casts = [
+        'registration_expiry' => 'date',
     ];
 
     public function citizen(): BelongsTo

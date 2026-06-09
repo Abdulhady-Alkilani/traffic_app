@@ -90,8 +90,9 @@ return [
     'no_seatbelt' => 'No Seatbelt',
     'using_phone' => 'Using Phone While Driving',
     'officer' => 'Officer',
-    'total_unpaid_fines' => 'Total Unpaid Fines (SAR)',
+    'total_unpaid_fines' => 'Total Unpaid Fines (SYP)',
     'violations_this_week' => 'Violations Issued This Week',
+    'violations_over_time' => 'Traffic Violations Statistics',
     'click_or_drag' => 'Click or drag an image here',
     'min_chars' => 'min characters',
     'report_success_title' => 'Report Submitted Successfully!',
@@ -115,4 +116,15 @@ return [
 
     // General
     'error_occurred' => 'An error occurred',
+
+    // Statuses
+    'new' => 'Pending',
+    'in_progress' => 'In Progress',
+    'resolved' => 'Resolved',
+    'rejected' => 'Rejected',
+
+    // Departments
+    'highway_patrol' => 'Highway Patrol',
+    'traffic_police' => 'Traffic Police',
+    'local_police' => 'Local Police',
 ];

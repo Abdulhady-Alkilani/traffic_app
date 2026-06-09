@@ -35,28 +35,60 @@ class VehicleResource extends Resource
         return __('filament.resources.vehicle.plural_label');
     }
 
-    public static function canCreate(): bool
-    {
-        return false;
-    }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('citizen_id')
+                    ->relationship('citizen', 'full_name')
+                    ->label(__('filament.columns.owner'))
+                    ->searchable()
+                    ->preload()
+                    ->required(),
                 Forms\Components\TextInput::make('plate_number')
                     ->label(__('messages.plate_number'))
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('vehicle_type')
+                Forms\Components\Select::make('vehicle_type')
                     ->label(__('messages.type'))
-                    ->required(),
+                    ->options([
+                        'private' => 'سيارة خاصة (سياحية)',
+                        'public' => 'نقل عام (باص/ميكروباص)',
+                        'pickup' => 'سيارة نقل (بيك أب)',
+                        'truck' => 'شاحنة',
+                        'motorcycle' => 'دراجة نارية',
+                        'agricultural' => 'مركبة زراعية',
+                        'other' => 'أخرى',
+                    ])
+                    ->required()
+                    ->searchable(),
                 Forms\Components\TextInput::make('make')
                     ->label(__('messages.make'))
                     ->required(),
+                Forms\Components\TextInput::make('model_name')
+                    ->label(__('الطراز'))
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('model_year')
                     ->label(__('messages.model_year'))
-                    ->required(),
+                    ->required()
+                    ->numeric(),
+                Forms\Components\TextInput::make('chassis_number')
+                    ->label(__('رقم الشاسيه'))
+                    ->maxLength(255)
+                    ->unique(ignoreRecord: true),
+                Forms\Components\TextInput::make('engine_number')
+                    ->label(__('رقم المحرك'))
+                    ->maxLength(255),
+                Forms\Components\DatePicker::make('registration_expiry')
+                    ->label(__('تاريخ انتهاء الميكانيك')),
+                Forms\Components\Select::make('insurance_status')
+                    ->label(__('حالة التأمين'))
+                    ->options([
+                        'valid' => __('ساري المفعول'),
+                        'expired' => __('منتهي الصلاحية'),
+                    ])
+                    ->default('valid'),
                 Forms\Components\ColorPicker::make('color')
                     ->label(__('messages.color'))
                     ->required(),
@@ -77,9 +109,20 @@ class VehicleResource extends Resource
                 Tables\Columns\TextColumn::make('make')
                     ->label(__('messages.make'))
                     ->searchable(),
+                Tables\Columns\TextColumn::make('model_name')
+                    ->label(__('الطراز'))
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('model_year')
                     ->label(__('messages.model_year'))
                     ->sortable(),
+                Tables\Columns\TextColumn::make('insurance_status')
+                    ->label(__('حالة التأمين'))
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'valid' => 'success',
+                        'expired' => 'danger',
+                        default => 'gray',
+                    }),
                 Tables\Columns\ColorColumn::make('color')
                     ->label(__('messages.color')),
                 Tables\Columns\TextColumn::make('citizen.full_name')
@@ -89,8 +132,21 @@ class VehicleResource extends Resource
             ->filters([])
             ->actions([
                 Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
-            ->bulkActions([]);
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            VehicleResource\RelationManagers\CitizenRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

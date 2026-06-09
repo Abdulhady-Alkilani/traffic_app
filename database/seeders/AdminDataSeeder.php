@@ -16,7 +16,7 @@ class AdminDataSeeder extends Seeder
     {
         $adminUser = User::create([
             'username' => 'superadmin',
-            'email' => 'admin@traffic.com',
+            'email' => 'admin@traffic.gov.sy',
             'password' => Hash::make('password'),
             'role_id' => $adminRoleId,
             'is_active' => true,
@@ -24,7 +24,7 @@ class AdminDataSeeder extends Seeder
 
         return AdminData::create([
             'user_id' => $adminUser->id,
-            'full_name' => 'Super Admin',
+            'full_name' => 'مدير النظام العام',
         ]);
     }
 }

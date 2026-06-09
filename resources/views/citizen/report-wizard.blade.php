@@ -69,7 +69,7 @@
                     <div class="relative">
                         <input type="text" x-model="vehicleSearch" @input.debounce.300ms="searchVehicles()" @focus="if(vehicleResults.length) vehicleDropdownOpen = true"
                             name="reported_vehicle_plate"
-                            :placeholder="selectedVehicle ? '' : '{{ __('ابحث في مركباتك، أو اكتب رقم اللوحة مباشرة...') }}'"
+                            :placeholder="selectedVehicle ? '' : '{{ __('ابحث عن مركبة برقم اللوحة، أو اكتبها يدوياً...') }}'"
                             class="w-full px-4 py-2.5 pr-10 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
                             :class="selectedVehicle ? 'hidden' : ''">
                         {{-- Selected Vehicle Display --}}
@@ -151,6 +151,21 @@
                     <span class="w-6 h-6 bg-indigo-600 text-white rounded-lg flex items-center justify-center text-xs font-bold">4</span>
                     {{ __('messages.location') }}
                 </h2>
+
+                <div class="mb-4 bg-gray-50 dark:bg-slate-900/50 p-3 rounded-xl border border-gray-100 dark:border-gray-800">
+                    <p class="text-xs font-bold text-gray-500 mb-2">{{ __('نطاق الحادثة لتوجيه البلاغ للجهة المختصة') }} <span class="text-rose-500">*</span></p>
+                    <div class="flex gap-6">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="location_type" value="in_city" x-model="form.location_type" class="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500 dark:bg-slate-800 dark:border-gray-600" required>
+                            <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('ضمن المدينة') }}</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="location_type" value="highway" x-model="form.location_type" class="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500 dark:bg-slate-800 dark:border-gray-600" required>
+                            <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('على الاستراد (طريق سفر)') }}</span>
+                        </label>
+                    </div>
+                </div>
+
                 <div class="flex flex-col sm:flex-row gap-3">
                     <button type="button" @click="getLocation()" :disabled="gettingLocation"
                         class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 shrink-0"
@@ -355,6 +370,7 @@ function quickReport() {
             latitude: null,
             longitude: null,
             location_text: '',
+            location_type: 'in_city',
             vehicle_id: '',
             unknown_plate: false,
             description: '',
@@ -383,6 +399,7 @@ function quickReport() {
                     this.form.longitude = pos.coords.longitude;
                     this.gettingLocation = false;
                     this.locationMessage = '{{ __("تم تحديد موقعك بدقة عبر الـ GPS.") }}';
+                    this.fetchLocationName(pos.coords.latitude, pos.coords.longitude);
                     if (this.map) {
                         const latlng = [pos.coords.latitude, pos.coords.longitude];
                         this.map.setView(latlng, 15);
@@ -450,6 +467,7 @@ function quickReport() {
                 const lng = e.latlng.lng;
                 this.form.latitude = lat;
                 this.form.longitude = lng;
+                this.fetchLocationName(lat, lng);
                 
                 if (this.marker) {
                     this.marker.setLatLng(e.latlng);
@@ -458,6 +476,18 @@ function quickReport() {
                 }
                 this.locationError = null;
             });
+        },
+
+        async fetchLocationName(lat, lng) {
+            try {
+                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=ar`);
+                const data = await response.json();
+                if (data && data.display_name) {
+                    this.form.location_text = data.display_name;
+                }
+            } catch (error) {
+                console.error("Reverse geocoding failed", error);
+            }
         },
 
         async searchVehicles() {

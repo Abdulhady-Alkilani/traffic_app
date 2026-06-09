@@ -14,77 +14,77 @@ class ActivityLogSeeder extends Seeder
         [
             'action_type' => 'create',
             'target_table' => 'users',
-            'description' => 'Created new police officer account: officer_highway_patrol',
+            'description' => 'تم إنشاء حساب ضابط شرطة جديد: officer_highway_patrol',
         ],
         [
             'action_type' => 'create',
             'target_table' => 'users',
-            'description' => 'Created new police officer account: officer_traffic_police',
+            'description' => 'تم إنشاء حساب ضابط شرطة جديد: officer_traffic_police',
         ],
         [
             'action_type' => 'create',
             'target_table' => 'users',
-            'description' => 'Created new police officer account: officer_local_police',
+            'description' => 'تم إنشاء حساب ضابط شرطة جديد: officer_local_police',
         ],
         [
             'action_type' => 'update',
             'target_table' => 'reports',
-            'description' => 'Updated report status to "resolved" for highway accident report.',
+            'description' => 'تم تحديث حالة البلاغ إلى "تم الحل" لبلاغ حادث على أوتستراد دمشق-حمص.',
         ],
         [
             'action_type' => 'update',
             'target_table' => 'reports',
-            'description' => 'Assigned report to highway_patrol department.',
+            'description' => 'تم إسناد البلاغ إلى قسم دورية الأوتستراد.',
         ],
         [
             'action_type' => 'create',
             'target_table' => 'traffic_violations',
-            'description' => 'Issued speeding violation to Ahmad Khaled Al-Omari.',
+            'description' => 'تم تسجيل مخالفة تجاوز السرعة لأحمد خالد العمري.',
         ],
         [
             'action_type' => 'update',
             'target_table' => 'traffic_violations',
-            'description' => 'Marked violation as paid for reckless driving offense.',
+            'description' => 'تم تأشير المخالفة كمدفوعة لمخالفة القيادة المتهورة.',
         ],
         [
             'action_type' => 'delete',
             'target_table' => 'reports',
-            'description' => 'Deleted duplicate report submitted for the same incident.',
+            'description' => 'تم حذف بلاغ مكرر مقدّم لنفس الحادثة.',
         ],
         [
             'action_type' => 'update',
             'target_table' => 'users',
-            'description' => 'Deactivated user account due to inactivity for 90 days.',
+            'description' => 'تم تعطيل حساب مستخدم بسبب عدم النشاط لمدة 90 يوماً.',
         ],
         [
             'action_type' => 'create',
             'target_table' => 'traffic_violations',
-            'description' => 'Issued red light violation to Sara Mohammad Al-Hussein.',
+            'description' => 'تم تسجيل مخالفة تجاوز إشارة حمراء لسارة محمد الحموي.',
         ],
         [
             'action_type' => 'update',
             'target_table' => 'reports',
-            'description' => 'Changed report status from "new" to "in_progress" for security threat report.',
+            'description' => 'تم تغيير حالة البلاغ من "جديد" إلى "قيد التنفيذ" لبلاغ التهديد الأمني.',
         ],
         [
             'action_type' => 'create',
             'target_table' => 'users',
-            'description' => 'Created new citizen account: layla_ibrahim',
+            'description' => 'تم إنشاء حساب مواطن جديد: layla_ibrahim',
         ],
         [
             'action_type' => 'update',
             'target_table' => 'traffic_violations',
-            'description' => 'Canceled truck speeding violation due to speed radar calibration error.',
+            'description' => 'تم إلغاء مخالفة تجاوز السرعة للشاحنة بسبب خطأ في معايرة رادار السرعة.',
         ],
         [
             'action_type' => 'create',
             'target_table' => 'traffic_violations',
-            'description' => 'Issued phone usage violation to Layla Ibrahim Al-Nasser.',
+            'description' => 'تم تسجيل مخالفة استخدام الهاتف لليلى إبراهيم الشامي.',
         ],
         [
             'action_type' => 'update',
             'target_table' => 'reports',
-            'description' => 'Rejected traffic jam report due to insufficient evidence.',
+            'description' => 'تم رفض بلاغ الاختناق المروري بسبب عدم كفاية الأدلة.',
         ],
     ];
 

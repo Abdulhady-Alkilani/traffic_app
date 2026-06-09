@@ -41,7 +41,19 @@ class ActivityLogResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form->schema([]);
+        return $form->schema([
+            \Filament\Forms\Components\TextInput::make('admin.full_name')
+                ->label(__('filament.columns.admin')),
+            \Filament\Forms\Components\TextInput::make('action_type')
+                ->label(__('filament.columns.action_type')),
+            \Filament\Forms\Components\TextInput::make('target_table')
+                ->label(__('filament.columns.target_table')),
+            \Filament\Forms\Components\DateTimePicker::make('created_at')
+                ->label(__('filament.columns.created_at')),
+            \Filament\Forms\Components\Textarea::make('description')
+                ->label(__('messages.description'))
+                ->columnSpanFull(),
+        ]);
     }
 
     public static function table(Table $table): Table

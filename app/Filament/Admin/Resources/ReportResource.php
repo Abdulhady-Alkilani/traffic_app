@@ -37,10 +37,6 @@ class ReportResource extends Resource
         return __('filament.resources.report.plural_label');
     }
 
-    public static function canCreate(): bool
-    {
-        return false;
-    }
 
     public static function form(Form $form): Form
     {
@@ -48,21 +44,59 @@ class ReportResource extends Resource
             ->schema([
                 Forms\Components\Section::make(__('filament.sections.report_details'))
                     ->schema([
-                        Forms\Components\TextInput::make('report_type')
+                        Forms\Components\Select::make('citizen_id')
+                            ->relationship('citizen', 'full_name')
+                            ->label(__('filament.columns.citizen'))
+                            ->searchable()
+                            ->preload()
+                            ->required(),
+                        Forms\Components\Select::make('report_type')
                             ->label(__('messages.report_type'))
-                            ->disabled(),
+                            ->options([
+                                'accident' => __('messages.accident'),
+                                'hazard' => __('messages.hazard'),
+                                'traffic_jam' => __('messages.traffic_jam'),
+                                'security_threat' => __('messages.security_threat'),
+                            ])
+                            ->required(),
                         Forms\Components\Textarea::make('description')
                             ->label(__('messages.description'))
-                            ->disabled(),
+                            ->required(),
                         Forms\Components\TextInput::make('location_text')
                             ->label(__('messages.location'))
-                            ->disabled(),
+                            ->required(),
                         Forms\Components\TextInput::make('latitude')
                             ->label(__('messages.coordinates'))
-                            ->disabled(),
+                            ->required()
+                            ->inputMode('decimal')
+                            ->rule('regex:/^[-]?\d+[\.,]?\d*$/')
+                            ->rules([
+                                function () {
+                                    return function (string $attribute, $value, \Closure $fail) {
+                                        $val = (float) str_replace(',', '.', (string) $value);
+                                        if ($val < -90 || $val > 90) {
+                                            $fail('خط العرض يجب أن يكون بين -90 و 90');
+                                        }
+                                    };
+                                },
+                            ])
+                            ->mutateDehydratedStateUsing(fn ($state) => str_replace(',', '.', (string) $state)),
                         Forms\Components\TextInput::make('longitude')
                             ->label(__('messages.coordinates'))
-                            ->disabled(),
+                            ->required()
+                            ->inputMode('decimal')
+                            ->rule('regex:/^[-]?\d+[\.,]?\d*$/')
+                            ->rules([
+                                function () {
+                                    return function (string $attribute, $value, \Closure $fail) {
+                                        $val = (float) str_replace(',', '.', (string) $value);
+                                        if ($val < -180 || $val > 180) {
+                                            $fail('خط الطول يجب أن يكون بين -180 و 180');
+                                        }
+                                    };
+                                },
+                            ])
+                            ->mutateDehydratedStateUsing(fn ($state) => str_replace(',', '.', (string) $state)),
                     ])->columns(2),
             ]);
     }
@@ -112,9 +146,22 @@ class ReportResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
-            ->bulkActions([])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ])
             ->defaultSort('created_at', 'desc');
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            ReportResource\RelationManagers\CitizenRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

@@ -22,10 +22,9 @@ class ProfileController extends Controller
         $user = Auth::user();
 
         $validated = $request->validate([
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max:255'],
+            'full_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'phone_number' => ['nullable', 'string', 'max:20'],
+            'phone' => ['nullable', 'string', 'max:20'],
         ]);
 
         // Update User info
@@ -36,9 +35,8 @@ class ProfileController extends Controller
         // Update Citizen data
         if ($user->citizenData) {
             $user->citizenData->update([
-                'first_name' => $validated['first_name'],
-                'last_name' => $validated['last_name'],
-                'phone_number' => $validated['phone_number'],
+                'full_name' => $validated['full_name'],
+                'phone' => $validated['phone'],
             ]);
         }
 

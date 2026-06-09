@@ -90,8 +90,9 @@ return [
     'no_seatbelt' => 'عدم ربط حزام الأمان',
     'using_phone' => 'استخدام الهاتف أثناء القيادة',
     'officer' => 'الضابط',
-    'total_unpaid_fines' => 'إجمالي الغرامات غير المدفوعة (ر.س)',
+    'total_unpaid_fines' => 'إجمالي الغرامات غير المدفوعة (ل.س)',
     'violations_this_week' => 'المخالفات الصادرة هذا الأسبوع',
+    'violations_over_time' => 'إحصائيات المخالفات المرورية',
     'click_or_drag' => 'اضغط أو اسحب صورة هنا',
     'min_chars' => 'حرف كحد أدنى',
     'report_success_title' => 'تم إرسال البلاغ بنجاح!',
@@ -115,4 +116,15 @@ return [
 
     // عام
     'error_occurred' => 'حدث خطأ',
+    
+    // Statuses
+    'new' => 'قيد الانتظار',
+    'in_progress' => 'قيد المعالجة',
+    'resolved' => 'محلول',
+    'rejected' => 'مرفوض',
+
+    // Departments
+    'highway_patrol' => 'دورية الطرق السريعة',
+    'traffic_police' => 'شرطة المرور',
+    'local_police' => 'الشرطة المحلية',
 ];

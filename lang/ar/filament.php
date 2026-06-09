@@ -109,6 +109,7 @@ return [
     'search' => 'بحث...',
     'no_results' => 'لا توجد نتائج.',
     'relation_managers' => [
+        'admin_data' => 'بيانات الإدارة',
         'police_data' => 'بيانات الشرطة',
         'citizen_data' => 'بيانات المواطن',
         'vehicles' => 'المركبات',

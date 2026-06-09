@@ -10,4 +10,11 @@ use Filament\Resources\Pages\ListRecords;
 class ListVehicles extends ListRecords
 {
     protected static string $resource = VehicleResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            \Filament\Actions\CreateAction::make(),
+        ];
+    }
 }

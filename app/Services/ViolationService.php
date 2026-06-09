@@ -16,7 +16,7 @@ class ViolationService
     {
         return DB::transaction(function () use ($report, $police, $data): TrafficViolation {
             return TrafficViolation::create([
-                'citizen_id' => $report->citizen_id,
+                'citizen_id' => $report->vehicle ? $report->vehicle->citizen_id : $report->citizen_id,
                 'vehicle_id' => $report->vehicle_id,
                 'police_id' => $police->id,
                 'report_id' => $report->id,

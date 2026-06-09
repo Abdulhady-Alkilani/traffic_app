@@ -90,75 +90,137 @@
                         </div>
                     </div>
 
-                    {{-- Full Name --}}
-                    <div>
-                        <label for="full_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('messages.full_name') }}</label>
+                    {{-- Role Selection --}}
+                    <div class="col-span-1 md:col-span-2">
+                        <label for="role" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">طبيعة الحساب (مواطن أم شرطي)</label>
                         <div class="relative">
-                            <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
-                                <svg class="w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z" />
-                                </svg>
-                            </div>
+                            <select id="role" name="role"
+                                class="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-slate-800/50 text-gray-900 dark:text-white form-input-pro focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all duration-200"
+                                required onchange="toggleRoleFields()">
+                                <option value="citizen" {{ old('role') === 'citizen' ? 'selected' : '' }}>مواطن (Citizen)</option>
+                                <option value="police" {{ old('role') === 'police' ? 'selected' : '' }}>شرطي (Police)</option>
+                            </select>
+                        </div>
+                        @error('role') <p class="mt-1.5 text-sm text-rose-500">{{ $message }}</p> @enderror
+                    </div>
+
+                    {{-- Citizen Fields --}}
+                    <div id="citizen_fields" class="contents">
+                        {{-- Full Name --}}
+                        <div>
+                            <label for="full_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('messages.full_name') }}</label>
                             <input type="text" id="full_name" name="full_name" value="{{ old('full_name') }}"
-                                class="w-full ps-11 pe-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-slate-800/50 text-gray-900 dark:text-white placeholder-gray-400 form-input-pro focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all duration-200"
-                                required>
+                                class="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-slate-800/50 text-gray-900 dark:text-white form-input-pro focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
+                            @error('full_name') <p class="mt-1.5 text-sm text-rose-500">{{ $message }}</p> @enderror
                         </div>
-                        @error('full_name') <p class="mt-1.5 text-sm text-rose-500 flex items-center gap-1"><svg class="w-4 h-4 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" /></svg>{{ $message }}</p> @enderror
-                    </div>
 
-                    {{-- National ID --}}
-                    <div>
-                        <label for="national_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('messages.national_id') }}</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
-                                <svg class="w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M7.864 4.243A7.5 7.5 0 0 1 19.5 10.5c0 2.92-.556 5.709-1.568 8.268M5.742 6.364A7.465 7.465 0 0 0 4.5 10.5a7.464 7.464 0 0 1-1.15 3.993m1.989 3.559A11.209 11.209 0 0 0 8.25 10.5a3.75 3.75 0 1 1 7.5 0c0 .527-.021 1.049-.064 1.565M12 10.5a14.94 14.94 0 0 1-3.6 9.75m6.633-4.596a18.666 18.666 0 0 1-2.485 5.33" />
-                                </svg>
-                            </div>
+                        {{-- National ID --}}
+                        <div>
+                            <label for="national_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('messages.national_id') }}</label>
                             <input type="text" id="national_id" name="national_id" value="{{ old('national_id') }}"
-                                class="w-full ps-11 pe-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-slate-800/50 text-gray-900 dark:text-white placeholder-gray-400 form-input-pro focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all duration-200"
-                                required>
+                                class="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-slate-800/50 text-gray-900 dark:text-white form-input-pro focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
+                            @error('national_id') <p class="mt-1.5 text-sm text-rose-500">{{ $message }}</p> @enderror
                         </div>
-                        @error('national_id') <p class="mt-1.5 text-sm text-rose-500 flex items-center gap-1"><svg class="w-4 h-4 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" /></svg>{{ $message }}</p> @enderror
-                    </div>
 
-                    {{-- Phone --}}
-                    <div>
-                        <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('messages.phone') }}</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
-                                <svg class="w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
-                                </svg>
-                            </div>
+                        {{-- Phone --}}
+                        <div>
+                            <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('messages.phone') }}</label>
                             <input type="tel" id="phone" name="phone" value="{{ old('phone') }}"
-                                class="w-full ps-11 pe-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-slate-800/50 text-gray-900 dark:text-white placeholder-gray-400 form-input-pro focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all duration-200"
-                                required>
+                                class="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-slate-800/50 text-gray-900 dark:text-white form-input-pro focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
+                            @error('phone') <p class="mt-1.5 text-sm text-rose-500">{{ $message }}</p> @enderror
                         </div>
-                        @error('phone') <p class="mt-1.5 text-sm text-rose-500 flex items-center gap-1"><svg class="w-4 h-4 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" /></svg>{{ $message }}</p> @enderror
-                    </div>
 
-                    {{-- Blood Type --}}
-                    <div>
-                        <label for="blood_type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('messages.blood_type') }}</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
-                                <svg class="w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                                </svg>
-                            </div>
+                        {{-- Blood Type --}}
+                        <div>
+                            <label for="blood_type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('messages.blood_type') }}</label>
                             <select id="blood_type" name="blood_type"
-                                class="w-full ps-11 pe-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-slate-800/50 text-gray-900 dark:text-white form-input-pro focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all duration-200 appearance-none"
-                                required>
+                                class="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-slate-800/50 text-gray-900 dark:text-white form-input-pro focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none appearance-none">
                                 <option value="">{{ __('messages.select_blood_type') }}</option>
                                 @foreach(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] as $bt)
                                     <option value="{{ $bt }}" {{ old('blood_type') === $bt ? 'selected' : '' }}>{{ $bt }}</option>
                                 @endforeach
                             </select>
+                            @error('blood_type') <p class="mt-1.5 text-sm text-rose-500">{{ $message }}</p> @enderror
                         </div>
-                        @error('blood_type') <p class="mt-1.5 text-sm text-rose-500 flex items-center gap-1"><svg class="w-4 h-4 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" /></svg>{{ $message }}</p> @enderror
+                    </div>
+
+                    {{-- Police Fields --}}
+                    <div id="police_fields" class="contents" style="display: none;">
+                        {{-- Badge Number --}}
+                        <div>
+                            <label for="police_badge_number" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">الرقم العسكري</label>
+                            <input type="text" id="police_badge_number" name="police_badge_number" value="{{ old('police_badge_number') }}"
+                                class="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-slate-800/50 text-gray-900 dark:text-white form-input-pro focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
+                            @error('police_badge_number') <p class="mt-1.5 text-sm text-rose-500">{{ $message }}</p> @enderror
+                        </div>
+
+                        {{-- Full Name --}}
+                        <div>
+                            <label for="police_full_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">الاسم الكامل</label>
+                            <input type="text" id="police_full_name" name="police_full_name" value="{{ old('police_full_name') }}"
+                                class="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-slate-800/50 text-gray-900 dark:text-white form-input-pro focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
+                            @error('police_full_name') <p class="mt-1.5 text-sm text-rose-500">{{ $message }}</p> @enderror
+                        </div>
+
+                        {{-- Rank --}}
+                        <div>
+                            <label for="police_rank" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">الرتبة</label>
+                            <select id="police_rank" name="police_rank"
+                                class="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-slate-800/50 text-gray-900 dark:text-white form-input-pro focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none appearance-none">
+                                <option value="">اختر الرتبة</option>
+                                @foreach(['شرطي', 'عريف', 'رقيب', 'رقيب أول', 'مساعد', 'مساعد أول', 'ملازم', 'ملازم أول', 'نقيب', 'رائد', 'مقدم', 'عقيد', 'عميد', 'لواء'] as $rank)
+                                    <option value="{{ $rank }}" {{ old('police_rank') === $rank ? 'selected' : '' }}>{{ $rank }}</option>
+                                @endforeach
+                            </select>
+                            @error('police_rank') <p class="mt-1.5 text-sm text-rose-500">{{ $message }}</p> @enderror
+                        </div>
+
+                        {{-- Department --}}
+                        <div>
+                            <label for="police_department" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">القسم</label>
+                            <select id="police_department" name="police_department"
+                                class="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-slate-800/50 text-gray-900 dark:text-white form-input-pro focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none appearance-none">
+                                <option value="">اختر القسم</option>
+                                @foreach(\App\Enums\Department::cases() as $dept)
+                                    <option value="{{ $dept->value }}" {{ old('police_department') === $dept->value ? 'selected' : '' }}>{{ $dept->label() }}</option>
+                                @endforeach
+                            </select>
+                            @error('police_department') <p class="mt-1.5 text-sm text-rose-500">{{ $message }}</p> @enderror
+                        </div>
                     </div>
                 </div>
+
+                <script>
+                    function toggleRoleFields() {
+                        const role = document.getElementById('role').value;
+                        const citizenFields = document.getElementById('citizen_fields');
+                        const policeFields = document.getElementById('police_fields');
+                        
+                        if (role === 'citizen') {
+                            citizenFields.style.display = 'contents';
+                            policeFields.style.display = 'none';
+                            
+                            // Make citizen required, police optional
+                            ['full_name', 'national_id', 'phone', 'blood_type'].forEach(id => document.getElementById(id).required = true);
+                            ['police_badge_number', 'police_full_name', 'police_rank', 'police_department'].forEach(id => {
+                                const el = document.getElementById(id);
+                                if (el) el.required = false;
+                            });
+                        } else {
+                            citizenFields.style.display = 'none';
+                            policeFields.style.display = 'contents';
+                            
+                            // Make police required, citizen optional
+                            ['full_name', 'national_id', 'phone', 'blood_type'].forEach(id => {
+                                const el = document.getElementById(id);
+                                if (el) el.required = false;
+                            });
+                            ['police_badge_number', 'police_full_name', 'police_rank', 'police_department'].forEach(id => document.getElementById(id).required = true);
+                        }
+                    }
+                    // Run on load
+                    document.addEventListener('DOMContentLoaded', toggleRoleFields);
+                </script>
 
                 {{-- Submit --}}
                 <button type="submit"

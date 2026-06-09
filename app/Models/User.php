@@ -91,6 +91,10 @@ class User extends Authenticatable implements FilamentUser, HasName
 
     public function canAccessPanel(Panel $panel): bool
     {
+        if (!$this->is_active) {
+            return false;
+        }
+
         return match ($panel->getId()) {
             'admin' => $this->isAdmin(),
             'police' => $this->isPolice(),

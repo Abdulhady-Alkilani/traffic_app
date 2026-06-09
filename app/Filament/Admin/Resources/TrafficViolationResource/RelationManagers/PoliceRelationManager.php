@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Admin\Resources\UserResource\RelationManagers;
+namespace App\Filament\Admin\Resources\TrafficViolationResource\RelationManagers;
 
 use App\Enums\Department;
 use Filament\Forms;
@@ -11,18 +11,13 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class PoliceDataRelationManager extends RelationManager
+class PoliceRelationManager extends RelationManager
 {
-    protected static string $relationship = 'policeData';
-
-    public static function canViewForRecord(\Illuminate\Database\Eloquent\Model $ownerRecord, string $pageClass): bool
-    {
-        return $ownerRecord->isPolice();
-    }
+    protected static string $relationship = 'police';
 
     public static function getTitle($ownerRecord, string $pageClass): string
     {
-        return __('filament.relation_managers.police_data');
+        return __('messages.officer') ?? 'الضابط محرر المخالفة';
     }
 
     public function form(Form $form): Form
@@ -32,8 +27,7 @@ class PoliceDataRelationManager extends RelationManager
                 Forms\Components\TextInput::make('badge_number')
                     ->label(__('filament.columns.badge_number'))
                     ->required()
-                    ->maxLength(255)
-                    ->unique(ignoreRecord: true),
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('full_name')
                     ->label(__('filament.columns.full_name'))
                     ->required()
@@ -78,17 +72,10 @@ class PoliceDataRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('department')
                     ->label(__('filament.columns.department')),
             ])
-            ->headerActions([
-                Tables\Actions\CreateAction::make(),
-            ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->paginated(false);
     }
 }

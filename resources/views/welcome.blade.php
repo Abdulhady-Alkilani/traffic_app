@@ -4,7 +4,7 @@
 
 @section('content')
 {{-- Hero Section --}}
-<section class="relative overflow-hidden">
+<section class="relative overflow-hidden min-h-[70vh] flex items-center">
     {{-- Decorative elements --}}
     <div class="absolute inset-0 pointer-events-none">
         <div class="absolute top-20 start-10 w-72 h-72 bg-indigo-400/10 dark:bg-indigo-400/5 rounded-full blur-3xl animate-float"></div>
@@ -12,24 +12,26 @@
         <div class="absolute top-1/2 start-1/2 w-64 h-64 bg-cyan-400/5 rounded-full blur-3xl animate-float stagger-5"></div>
     </div>
 
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
-        <div class="text-center max-w-3xl mx-auto">
-            {{-- Badge --}}
-            <div class="animate-fade-in-down inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200/50 dark:border-indigo-800/50 text-indigo-600 dark:text-indigo-400 text-sm font-medium mb-8">
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 w-full">
+        <div class="text-center max-w-4xl mx-auto">
+            {{-- Official Badge --}}
+            <div class="animate-fade-in-down inline-flex items-center gap-2 px-5 py-2 rounded-full bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200/50 dark:border-indigo-800/50 text-indigo-600 dark:text-indigo-400 text-sm font-medium mb-8">
                 <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
                 </svg>
-                {{ __('messages.dashboard_subtitle') }}
+                منصة رسمية لإدارة السلامة المرورية
             </div>
 
             {{-- Title --}}
-            <h1 class="animate-fade-in-up text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6">
-                <span class="text-gray-900 dark:text-white">{{ config('app.name') }}</span>
+            <h1 class="animate-fade-in-up text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-6">
+                <span class="text-gray-900 dark:text-white">النظام الوطني</span>
+                <br>
+                <span class="gradient-text">للسلامة المرورية</span>
             </h1>
 
             {{-- Subtitle --}}
-            <p class="animate-fade-in-up stagger-1 text-lg md:text-xl text-gray-600 dark:text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed">
-                {{ __('messages.welcome_hero_text') }}
+            <p class="animate-fade-in-up stagger-1 text-base md:text-lg text-gray-600 dark:text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+                منصة إلكترونية متكاملة تهدف لتعزيز السلامة على الطرق من خلال تقديم البلاغات المرورية، متابعة المخالفات، وإدارة بيانات المركبات بشكل رقمي وآمن.
             </p>
 
             {{-- CTA Buttons --}}
@@ -93,75 +95,128 @@
     </div>
 </section>
 
-{{-- Features Section --}}
+{{-- Services Section --}}
 <section class="relative py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                {{ __('messages.features_title') }}
+                الخدمات المقدمة
             </h2>
-            <div class="w-20 h-1 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full mx-auto"></div>
+            <div class="w-20 h-1 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full mx-auto mb-4"></div>
+            <p class="text-gray-500 dark:text-gray-400 max-w-xl mx-auto">خدمات إلكترونية متكاملة لتسهيل التواصل بين المواطنين والجهات الأمنية المختصة</p>
         </div>
 
         <div class="grid md:grid-cols-3 gap-8">
-            {{-- Feature 1 - Safety --}}
+            {{-- Service 1 - Report Submission --}}
             <div class="group glass-card rounded-2xl p-8 hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-500 hover:-translate-y-1">
                 <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 mb-6 group-hover:scale-110 transition-transform duration-300">
                     <svg class="w-7 h-7 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
                     </svg>
                 </div>
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">{{ __('messages.feature_safety_title') }}</h3>
-                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ __('messages.feature_safety_desc') }}</p>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">تقديم البلاغات المرورية</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">أبلغ عن الحوادث والمخالفات المرورية إلكترونياً مع تحديد الموقع والتوجيه التلقائي للقسم المختص بمعالجة البلاغ.</p>
             </div>
 
-            {{-- Feature 2 - Reports --}}
+            {{-- Service 2 - Violation Tracking --}}
             <div class="group glass-card rounded-2xl p-8 hover:shadow-xl hover:shadow-purple-500/10 transition-all duration-500 hover:-translate-y-1">
                 <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20 mb-6 group-hover:scale-110 transition-transform duration-300">
                     <svg class="w-7 h-7 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                     </svg>
                 </div>
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">{{ __('messages.feature_reports_title') }}</h3>
-                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ __('messages.feature_reports_desc') }}</p>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">استعلام عن المخالفات</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">اطّلع على سجل المخالفات المرورية المسجلة على مركباتك، وتابع حالتها وقيمة الغرامات المالية المترتبة عليها.</p>
             </div>
 
-            {{-- Feature 3 - Tracking --}}
+            {{-- Service 3 - Vehicle Management --}}
             <div class="group glass-card rounded-2xl p-8 hover:shadow-xl hover:shadow-cyan-500/10 transition-all duration-500 hover:-translate-y-1">
                 <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 to-cyan-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 mb-6 group-hover:scale-110 transition-transform duration-300">
                     <svg class="w-7 h-7 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
                     </svg>
                 </div>
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">{{ __('messages.feature_tracking_title') }}</h3>
-                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ __('messages.feature_tracking_desc') }}</p>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">إدارة المركبات</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">سجّل مركباتك إلكترونياً واحتفظ بسجل رقمي شامل يتضمن بيانات كل مركبة من نوعها ولوحتها وسنة التصنيع.</p>
             </div>
         </div>
     </div>
 </section>
 
-{{-- Stats Section --}}
-<section class="relative py-16">
+{{-- How it Works Section --}}
+<section class="relative py-20 bg-gradient-to-b from-transparent via-indigo-50/30 dark:via-indigo-950/10 to-transparent">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="glass-card rounded-2xl p-8 md:p-12">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-                <div class="text-center">
-                    <div class="text-3xl md:text-4xl font-extrabold gradient-text mb-2">50+</div>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">{{ __('messages.stat_reports') }}</p>
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                كيف يعمل النظام؟
+            </h2>
+            <div class="w-20 h-1 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full mx-auto mb-4"></div>
+            <p class="text-gray-500 dark:text-gray-400 max-w-xl mx-auto">خطوات بسيطة للاستفادة من خدمات النظام</p>
+        </div>
+
+        <div class="grid md:grid-cols-4 gap-6">
+            {{-- Step 1 --}}
+            <div class="text-center group">
+                <div class="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 mb-5 group-hover:scale-110 transition-transform duration-300">
+                    <span class="text-white font-bold text-xl">1</span>
                 </div>
-                <div class="text-center">
-                    <div class="text-3xl md:text-4xl font-extrabold gradient-text mb-2">3</div>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">{{ __('messages.stat_departments') }}</p>
+                <h4 class="font-bold text-gray-900 dark:text-white mb-2">إنشاء حساب</h4>
+                <p class="text-sm text-gray-500 dark:text-gray-400">سجّل حسابك كمواطن أو شرطي وأدخل بياناتك الشخصية</p>
+            </div>
+
+            {{-- Step 2 --}}
+            <div class="text-center group">
+                <div class="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20 mb-5 group-hover:scale-110 transition-transform duration-300">
+                    <span class="text-white font-bold text-xl">2</span>
                 </div>
-                <div class="text-center">
-                    <div class="text-3xl md:text-4xl font-extrabold gradient-text mb-2">24/7</div>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">{{ __('messages.stat_availability') }}</p>
+                <h4 class="font-bold text-gray-900 dark:text-white mb-2">تسجيل المركبات</h4>
+                <p class="text-sm text-gray-500 dark:text-gray-400">أضف بيانات مركباتك لربطها بحسابك الشخصي</p>
+            </div>
+
+            {{-- Step 3 --}}
+            <div class="text-center group">
+                <div class="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-cyan-500 to-cyan-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 mb-5 group-hover:scale-110 transition-transform duration-300">
+                    <span class="text-white font-bold text-xl">3</span>
                 </div>
-                <div class="text-center">
-                    <div class="text-3xl md:text-4xl font-extrabold gradient-text mb-2">2</div>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">{{ __('messages.stat_languages') }}</p>
+                <h4 class="font-bold text-gray-900 dark:text-white mb-2">تقديم البلاغات</h4>
+                <p class="text-sm text-gray-500 dark:text-gray-400">أبلغ عن أي حادث مروري وسيتم توجيهه للقسم المعني</p>
+            </div>
+
+            {{-- Step 4 --}}
+            <div class="text-center group">
+                <div class="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/20 mb-5 group-hover:scale-110 transition-transform duration-300">
+                    <span class="text-white font-bold text-xl">4</span>
                 </div>
+                <h4 class="font-bold text-gray-900 dark:text-white mb-2">متابعة الحالة</h4>
+                <p class="text-sm text-gray-500 dark:text-gray-400">تابع حالة بلاغاتك ومخالفاتك بشكل لحظي من لوحة التحكم</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{{-- CTA Section --}}
+<section class="relative py-20">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="glass-card rounded-2xl p-10 md:p-14 text-center relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 pointer-events-none"></div>
+            <div class="relative">
+                <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/25 mb-6">
+                    <svg class="w-8 h-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+                    </svg>
+                </div>
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">ساهم في تعزيز السلامة المرورية</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-8 max-w-xl mx-auto leading-relaxed">
+                    سلامتك وسلامة الآخرين على الطرق مسؤولية مشتركة. سجّل الآن وكن جزءاً فعّالاً في منظومة السلامة المرورية الوطنية.
+                </p>
+                @guest
+                    <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30 transition-all duration-300 hover:-translate-y-0.5 btn-shine">
+                        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
+                        </svg>
+                        أنشئ حسابك الآن
+                    </a>
+                @endguest
             </div>
         </div>
     </div>

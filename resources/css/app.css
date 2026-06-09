@@ -6,6 +6,8 @@
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
+[x-cloak] { display: none !important; }
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
@@ -268,4 +270,16 @@ html[dir="rtl"] body {
 
 [data-tooltip]:hover::after {
     opacity: 1;
+}
+
+/* Prevent tooltips near the edge from overflowing the screen */
+html[dir="rtl"] .tooltip-edge[data-tooltip]::after {
+    left: -10px; /* Align to the left edge of the button */
+    transform: none;
+}
+
+html[dir="ltr"] .tooltip-edge[data-tooltip]::after {
+    left: auto;
+    right: -10px; /* Align to the right edge of the button */
+    transform: none;
 }

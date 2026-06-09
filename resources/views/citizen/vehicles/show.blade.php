@@ -34,7 +34,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
                         </svg>
                     </div>
-                    <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ $vehicle->make }}</h2>
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ $vehicle->make }} {{ $vehicle->model_name ?? '' }}</h2>
                     <p class="text-gray-500 dark:text-gray-400">{{ $vehicle->model_year }} • {{ __('messages.' . $vehicle->vehicle_type) }}</p>
                 </div>
                 
@@ -54,9 +54,29 @@
                         <span class="text-gray-500 font-semibold text-sm">{{ __('المحافظة') }}</span>
                         <span class="font-bold text-gray-900 dark:text-white">{{ $vehicle->registration_city ?? '-' }}</span>
                     </div>
-                    <div class="flex justify-between items-center py-2">
-                        <span class="text-gray-500 font-semibold text-sm">{{ __('تاريخ التسجيل') }}</span>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-800">
+                        <span class="text-gray-500 font-semibold text-sm">{{ __('تاريخ التسجيل النظامي') }}</span>
                         <span class="font-bold text-gray-900 dark:text-white">{{ $vehicle->created_at->format('Y/m/d') }}</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-800">
+                        <span class="text-gray-500 font-semibold text-sm">{{ __('رقم الشاسيه') }}</span>
+                        <span class="font-mono font-bold text-gray-900 dark:text-white">{{ $vehicle->chassis_number ?? '-' }}</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-800">
+                        <span class="text-gray-500 font-semibold text-sm">{{ __('رقم المحرك') }}</span>
+                        <span class="font-mono font-bold text-gray-900 dark:text-white">{{ $vehicle->engine_number ?? '-' }}</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-800">
+                        <span class="text-gray-500 font-semibold text-sm">{{ __('تاريخ انتهاء الترخيص') }}</span>
+                        <span class="font-bold {{ $vehicle->registration_expiry && $vehicle->registration_expiry < now() ? 'text-rose-600' : 'text-gray-900 dark:text-white' }}">
+                            {{ $vehicle->registration_expiry ? $vehicle->registration_expiry->format('Y/m/d') : '-' }}
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center py-2">
+                        <span class="text-gray-500 font-semibold text-sm">{{ __('حالة التأمين') }}</span>
+                        <span class="font-bold {{ $vehicle->insurance_status === 'expired' ? 'text-rose-600' : 'text-emerald-600' }}">
+                            {{ $vehicle->insurance_status === 'valid' ? __('ساري المفعول') : __('منتهي الصلاحية') }}
+                        </span>
                     </div>
                 </div>
             </div>

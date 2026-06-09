@@ -78,7 +78,7 @@
                         <th class="px-5 py-4 text-start text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('messages.actions') }}</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+                <tbody x-data class="divide-y divide-gray-100 dark:divide-gray-800">
                     @forelse($violations as $violation)
                     <tr @click="window.location.href = '{{ route('citizen.violations.show', $violation) }}'" class="hover:bg-rose-50/30 dark:hover:bg-rose-900/10 transition-colors duration-150 cursor-pointer">
                         <td class="px-5 py-4 font-semibold text-gray-900 dark:text-white">{{ $violation->id }}</td>
