@@ -36,6 +36,11 @@ class TrafficViolationResource extends Resource
         return __('messages.violations');
     }
 
+    public static function canDelete($record): bool
+    {
+        return false;
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -81,7 +86,7 @@ class TrafficViolationResource extends Resource
                             ->label(__('messages.description'))
                             ->maxLength(500),
                         Forms\Components\TextInput::make('fine_amount')
-                            ->label(__('filament.columns.fine_amount'))
+                            ->label(__('messages.fine_amount') . ' (SYP)')
                             ->required()
                             ->numeric()
                             ->minValue(0.01)
@@ -90,6 +95,15 @@ class TrafficViolationResource extends Resource
                             ->label(__('messages.due_date'))
                             ->minDate(now())
                             ->required(),
+                        Forms\Components\Select::make('status')
+                            ->label(__('messages.status'))
+                            ->options(ViolationStatus::getSelectOptions()),
+                        Forms\Components\FileUpload::make('payment_receipt_path')
+                            ->label(__('إشعار الدفع'))
+                            ->image()
+                            ->disabled()
+                            ->columnSpanFull()
+                            ->visible(fn ($record) => $record && $record->payment_receipt_path),
                     ])->columns(2),
             ]);
     }
@@ -115,17 +129,19 @@ class TrafficViolationResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('messages.status'))
-                    ->badge()
-                    ->color(fn(ViolationStatus $state): string => $state->color()),
+                    ->badge(),
                 Tables\Columns\TextColumn::make('issued_at')
                     ->label(__('messages.issued_at'))
                     ->dateTime()
                     ->sortable(),
+                Tables\Columns\ImageColumn::make('payment_receipt_path')
+                    ->label(__('إشعار الدفع'))
+                    ->circular(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
                     ->label(__('messages.status'))
-                    ->options(ViolationStatus::class),
+                    ->options(ViolationStatus::getSelectOptions()),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

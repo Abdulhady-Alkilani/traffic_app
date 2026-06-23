@@ -193,15 +193,18 @@
                         placeholder="{{ __('messages.location_description') }}"
                         class="flex-1 px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                 </div>
-                <div x-show="locationMessage" x-transition class="flex items-center gap-2 text-xs text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/20 px-3 py-2 rounded-lg mt-2">
+                <div x-show="locationMessage" x-transition class="flex items-center gap-2 text-xs px-3 py-2 rounded-lg mt-2"
+                     :class="locationAccuracy !== null && locationAccuracy > 100
+                        ? 'text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/20'
+                        : 'text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/20'">
                     <svg class="w-4 h-4 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
                     </svg>
                     <span x-text="locationMessage"></span>
                 </div>
                 
-                {{-- Show precise coordinates --}}
-                <div x-show="form.latitude && form.longitude" x-transition class="mt-3 flex items-center gap-4 text-xs font-mono text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-slate-900/50 p-2.5 rounded-lg border border-gray-100 dark:border-gray-800">
+                {{-- Show precise coordinates + accuracy --}}
+                <div x-show="form.latitude && form.longitude" x-transition class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs font-mono text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-slate-900/50 p-2.5 rounded-lg border border-gray-100 dark:border-gray-800">
                     <div class="flex items-center gap-1">
                         <span class="font-bold text-gray-400">X (الطول):</span>
                         <span x-text="parseFloat(form.longitude).toFixed(6)" class="text-indigo-600 dark:text-indigo-400"></span>
@@ -209,6 +212,10 @@
                     <div class="flex items-center gap-1">
                         <span class="font-bold text-gray-400">Y (العرض):</span>
                         <span x-text="parseFloat(form.latitude).toFixed(6)" class="text-rose-600 dark:text-rose-400"></span>
+                    </div>
+                    <div x-show="locationAccuracy !== null" class="flex items-center gap-1">
+                        <span class="font-bold text-gray-400">دقة القراءة:</span>
+                        <span x-text="'±' + Math.round(locationAccuracy) + ' م'" :class="locationAccuracy > 100 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'"></span>
                     </div>
                 </div>
 
@@ -355,6 +362,9 @@ function quickReport() {
         submitting: false,
         gettingLocation: false,
         locationMessage: null,
+        locationAccuracy: null,
+        geoWatchId: null,
+        bestAccuracy: null,
         imagePreview: null,
         videoName: null,
         vehicleSearch: '',
@@ -393,25 +403,40 @@ function quickReport() {
         getLocation() {
             this.gettingLocation = true;
             this.locationMessage = null;
-            navigator.geolocation.getCurrentPosition(
+            this.bestAccuracy = null;
+
+            // Use watchPosition for a few seconds to get the most accurate reading,
+            // which significantly improves results on devices without dedicated GPS.
+            this.geoWatchId = navigator.geolocation.watchPosition(
                 (pos) => {
+                    const acc = pos.coords.accuracy;
+                    this.locationAccuracy = acc;
                     this.form.latitude = pos.coords.latitude;
                     this.form.longitude = pos.coords.longitude;
-                    this.gettingLocation = false;
-                    this.locationMessage = '{{ __("تم تحديد موقعك بدقة عبر الـ GPS.") }}';
-                    this.fetchLocationName(pos.coords.latitude, pos.coords.longitude);
-                    if (this.map) {
-                        const latlng = [pos.coords.latitude, pos.coords.longitude];
-                        this.map.setView(latlng, 15);
-                        if (this.marker) {
-                            this.marker.setLatLng(latlng);
-                        } else {
-                            this.marker = L.marker(latlng).addTo(this.map);
+
+                    // Keep the best (lowest accuracy value) reading so far
+                    if (this.bestAccuracy === null || acc < this.bestAccuracy) {
+                        this.bestAccuracy = acc;
+                        this.fetchLocationName(pos.coords.latitude, pos.coords.longitude);
+                        if (this.map) {
+                            const latlng = [pos.coords.latitude, pos.coords.longitude];
+                            this.map.setView(latlng, 17);
+                            if (this.marker) {
+                                this.marker.setLatLng(latlng);
+                            } else {
+                                this.marker = L.marker(latlng).addTo(this.map);
+                            }
                         }
+                    }
+
+                    // Stop watching once we have a good enough reading (<=35m) or after a few fixes
+                    if (acc <= 35) {
+                        this.stopGeoWatch(acc);
                     }
                 },
                 (err) => {
                     this.gettingLocation = false;
+                    this.stopGeoWatch(null);
                     let msg = '{{ __("يرجى إعطاء صلاحية الموقع للمتصفح، أو حدد موقعك على الخريطة.") }}';
                     if (err.code === 1) {
                         msg = '{{ __("لقد قمت برفض صلاحية تحديد الموقع. يرجى تفعيلها من إعدادات المتصفح أو حدد يدوياً.") }}';
@@ -423,11 +448,30 @@ function quickReport() {
                     this.locationMessage = msg;
                     
                     if (!this.showMap) {
-                        this.toggleMap(); // Auto open map on error
+                        this.toggleMap();
                     }
                 },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
             );
+
+            // Failsafe: stop watching after 8 seconds even if accuracy is still high
+            setTimeout(() => this.stopGeoWatch(this.locationAccuracy), 8000);
+        },
+
+        stopGeoWatch(finalAccuracy) {
+            if (this.geoWatchId !== null) {
+                navigator.geolocation.clearWatch(this.geoWatchId);
+                this.geoWatchId = null;
+            }
+            if (this.gettingLocation) {
+                this.gettingLocation = false;
+                const acc = finalAccuracy ?? this.bestAccuracy;
+                if (acc !== null && acc > 100) {
+                    this.locationMessage = '{{ __("تم تحديد الموقع ولكن الدقة منخفضة (أكثر من 100م). للتأكد من صحة الموقع، حدده يدوياً على الخريطة بالضغط على موقعك الفعلي.") }}';
+                } else if (acc !== null) {
+                    this.locationMessage = '{{ __("تم تحديد موقعك بدقة عبر الـ GPS.") }}';
+                }
+            }
         },
 
         toggleMap() {
@@ -435,7 +479,6 @@ function quickReport() {
             if (this.showMap) {
                 this.$nextTick(() => {
                     this.initMap();
-                    // Fix leaflet rendering bug inside Alpine x-show
                     setTimeout(() => {
                         if (this.map) {
                             this.map.invalidateSize();
@@ -450,10 +493,10 @@ function quickReport() {
                 this.map.invalidateSize();
                 return;
             }
-            const defaultLat = this.form.latitude || 33.5138;
-            const defaultLng = this.form.longitude || 36.2765;
-            
-            this.map = L.map('locationMap').setView([defaultLat, defaultLng], 13);
+            const defaultLat = this.form.latitude || 35.1361;
+            const defaultLng = this.form.longitude || 36.7559;
+
+            this.map = L.map('locationMap').setView([defaultLat, defaultLng], 14);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap'
             }).addTo(this.map);
@@ -467,6 +510,8 @@ function quickReport() {
                 const lng = e.latlng.lng;
                 this.form.latitude = lat;
                 this.form.longitude = lng;
+                this.locationAccuracy = 0;
+                this.locationMessage = '{{ __("تم تحديد الموقع يدوياً على الخريطة.") }}';
                 this.fetchLocationName(lat, lng);
                 
                 if (this.marker) {
@@ -474,20 +519,42 @@ function quickReport() {
                 } else {
                     this.marker = L.marker(e.latlng).addTo(this.map);
                 }
-                this.locationError = null;
             });
         },
 
         async fetchLocationName(lat, lng) {
             try {
-                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=ar`);
+                // zoom=18 gives the most precise (street-level) result
+                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&accept-language=ar`);
                 const data = await response.json();
-                if (data && data.display_name) {
+                if (data && data.address) {
+                    this.form.location_text = this.buildLocationText(data.address, data.display_name);
+                } else if (data && data.display_name) {
                     this.form.location_text = data.display_name;
                 }
             } catch (error) {
                 console.error("Reverse geocoding failed", error);
             }
+        },
+
+        buildLocationText(addr, fallback) {
+            // Build a clean, ordered location string from structured address parts
+            const parts = [];
+            if (addr.road || addr.pedestrian || addr.path) {
+                parts.push(addr.road || addr.pedestrian || addr.path);
+            }
+            if (addr.neighbourhood || addr.suburb || addr.quarter) {
+                parts.push(addr.neighbourhood || addr.suburb || addr.quarter);
+            }
+            // City level: prefer city, then town, then county (province capital)
+            const city = addr.city || addr.town || addr.village || addr.county;
+            if (city) {
+                parts.push(city);
+            }
+            if (addr.state) {
+                parts.push(addr.state);
+            }
+            return parts.length ? parts.join('، ') : (fallback || '');
         },
 
         async searchVehicles() {

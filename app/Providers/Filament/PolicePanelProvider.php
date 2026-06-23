@@ -28,8 +28,10 @@ class PolicePanelProvider extends PanelProvider
         return $panel
             ->id('police')
             ->path('police')
+            ->brandLogo(fn () => view('filament.brand'))
+            ->brandLogoHeight('3rem')
             ->colors([
-                'primary' => Color::Blue,
+                'primary' => Color::Purple,
             ])
             ->darkMode()
             ->discoverResources(in: app_path('Filament/Police/Resources'), for: 'App\\Filament\\Police\\Resources')

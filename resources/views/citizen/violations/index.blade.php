@@ -45,7 +45,7 @@
                     <option value="">{{ __('جميع الحالات') }}</option>
                     <option value="unpaid" {{ request('status') == 'unpaid' ? 'selected' : '' }}>{{ __('messages.unpaid') }}</option>
                     <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>{{ __('messages.paid') }}</option>
-                    <option value="canceled" {{ request('status') == 'canceled' ? 'selected' : '' }}>{{ __('messages.canceled') }}</option>
+                    <option value="pending_verification" {{ request('status') == 'pending_verification' ? 'selected' : '' }}>{{ __('messages.pending_verification') }}</option>
                 </select>
             </div>
             <div class="md:w-40">
@@ -90,7 +90,7 @@
                             <span class="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full
                                 {{ $violation->status->value === 'unpaid' ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/50 dark:text-rose-300' : '' }}
                                 {{ $violation->status->value === 'paid' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300' : '' }}
-                                {{ $violation->status->value === 'canceled' ? 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300' : '' }}
+                                {{ $violation->status->value === 'pending_verification' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' : '' }}
                             ">
                                 {{ __('messages.' . $violation->status->value) }}
                             </span>

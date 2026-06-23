@@ -39,8 +39,7 @@ class LatestUnresolvedReportsTable extends BaseWidget
                     ->badge(),
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('messages.status'))
-                    ->badge()
-                    ->color(fn(ReportStatus $state): string => $state->color()),
+                    ->badge(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('filament.columns.created_at'))
                     ->dateTime()

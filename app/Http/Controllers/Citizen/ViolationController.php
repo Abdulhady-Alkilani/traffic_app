@@ -14,6 +14,7 @@ class ViolationController extends Controller
 {
     public function __construct(
         private readonly ViolationService $violationService,
+        private readonly \App\Services\ActivityLogger $logger,
     ) {}
 
     public function index(\Illuminate\Http\Request $request): \Illuminate\View\View
@@ -66,7 +67,7 @@ class ViolationController extends Controller
         return view('citizen.violations.show', compact('violation'));
     }
 
-    public function mockPay(TrafficViolation $violation): JsonResponse
+    public function mockPay(\Illuminate\Http\Request $request, TrafficViolation $violation): JsonResponse
     {
         $citizenData = Auth::user()->citizenData;
 
@@ -78,7 +79,22 @@ class ViolationController extends Controller
             return response()->json(['success' => false, 'message' => 'Violation is not unpaid'], 400);
         }
 
-        $this->violationService->pay($violation);
+        $request->validate([
+            'receipt' => 'required|image|max:5120', // Max 5MB
+        ]);
+
+        if ($request->hasFile('receipt')) {
+            $path = $request->file('receipt')->store('receipts', 'public');
+            $violation->payment_receipt_path = $path;
+            $violation->status = \App\Enums\ViolationStatus::PendingVerification;
+            $violation->save();
+
+            $this->logger->log(
+                'payment',
+                'traffic_violations',
+                "رفع إيصال دفع المخالفة #{$violation->id} بقيمة {$violation->fine_amount} ل.س — بانتظار التحقق",
+            );
+        }
 
         return response()->json(['success' => true, 'message' => __('messages.payment_success')]);
     }

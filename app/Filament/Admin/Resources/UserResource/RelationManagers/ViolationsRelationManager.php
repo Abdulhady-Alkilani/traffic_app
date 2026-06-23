@@ -74,8 +74,7 @@ class ViolationsRelationManager extends RelationManager
                     ->schema([
                         Forms\Components\Select::make('status')
                             ->label(__('messages.status'))
-                            ->options(ViolationStatus::class)
-                            ->enum(ViolationStatus::class)
+                            ->options(ViolationStatus::getSelectOptions())
                             ->required(),
                     ]),
             ]);
@@ -97,8 +96,7 @@ class ViolationsRelationManager extends RelationManager
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('messages.status'))
-                    ->badge()
-                    ->color(fn(ViolationStatus $state): string => $state->color()),
+                    ->badge(),
                 Tables\Columns\TextColumn::make('due_date')
                     ->label(__('messages.due_date'))
                     ->date()

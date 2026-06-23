@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
-use App\Events\ReportCreated;
-use App\Listeners\LogReportCreation;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
@@ -17,10 +15,11 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        Event::listen(
-            ReportCreated::class,
-            LogReportCreation::class,
-        );
+        // Note: ReportCreated listeners (LogReportCreation, AnalyzeReportWithAi)
+        // are auto-discovered by Laravel's event discovery from app/Listeners.
+        // Do NOT register them manually here — it causes double execution.
+
+        \App\Models\Report::observe(\App\Observers\ReportObserver::class);
 
         Event::listen(\BezhanSalleh\FilamentLanguageSwitch\Events\LocaleChanged::class, function ($event) {
             session()->save();

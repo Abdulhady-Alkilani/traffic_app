@@ -193,16 +193,16 @@ document.addEventListener('DOMContentLoaded', function() {
             labels: [
                 '{{ __("messages.unpaid") }}',
                 '{{ __("messages.paid") }}',
-                '{{ __("messages.canceled") }}'
+                '{{ __("messages.pending_verification") }}'
             ],
             datasets: [{
                 data: [
                     {{ $violationsByStatus['unpaid'] ?? 0 }},
                     {{ $violationsByStatus['paid'] ?? 0 }},
-                    {{ $violationsByStatus['canceled'] ?? 0 }}
+                    {{ $violationsByStatus['pending_verification'] ?? 0 }}
                 ],
-                backgroundColor: ['#e11d48', '#059669', '#6b7280'],
-                hoverBackgroundColor: ['#be123c', '#047857', '#4b5563'],
+                backgroundColor: ['#e11d48', '#059669', '#eab308'],
+                hoverBackgroundColor: ['#be123c', '#047857', '#ca8a04'],
                 borderWidth: 0,
                 cutout: '72%',
                 borderRadius: 6,
@@ -234,7 +234,7 @@ document.addEventListener('DOMContentLoaded', function() {
         type: 'bar',
         data: {
             labels: [
-                '{{ __("messages.pending") }}',
+                '{{ __("messages.new") }}',
                 '{{ __("messages.in_progress") }}',
                 '{{ __("messages.resolved") }}',
                 '{{ __("messages.rejected") }}'
@@ -242,7 +242,7 @@ document.addEventListener('DOMContentLoaded', function() {
             datasets: [{
                 label: '{{ __("عدد البلاغات") }}',
                 data: [
-                    {{ $reportsByStatus['pending'] ?? 0 }},
+                    {{ $reportsByStatus['new'] ?? 0 }},
                     {{ $reportsByStatus['in_progress'] ?? 0 }},
                     {{ $reportsByStatus['resolved'] ?? 0 }},
                     {{ $reportsByStatus['rejected'] ?? 0 }}

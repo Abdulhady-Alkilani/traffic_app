@@ -6,6 +6,7 @@ namespace App\Filament\Police\Resources\AssignedReportResource\Pages;
 
 use App\Enums\ViolationStatus;
 use App\Filament\Police\Resources\AssignedReportResource;
+use App\Services\ReportAiAnalyzer;
 use App\Services\ViolationService;
 use Filament\Actions\Action;
 use Filament\Forms;
@@ -19,10 +20,36 @@ class ViewAssignedReport extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('reanalyze')
+                ->label(__('messages.ai_reanalyze'))
+                ->icon('heroicon-o-cpu-chip')
+                ->color('info')
+                ->requiresConfirmation()
+                ->action(function (ReportAiAnalyzer $analyzer) {
+                    $analyzer->analyze($this->record);
+
+                    Notification::make()
+                        ->title(__('messages.ai_analysis'))
+                        ->body($this->record->ai_summary ?? __('messages.ai_no_analysis'))
+                        ->success()
+                        ->send();
+
+                    $this->refreshFormData([
+                        'ai_severity_score',
+                        'ai_detected_plate',
+                        'ai_incident_type',
+                        'ai_damage_assessment',
+                        'ai_summary',
+                        'ai_is_duplicate',
+                        'ai_duplicate_of',
+                        'ai_analyzed_at',
+                    ]);
+                }),
             Action::make('issueViolation')
                 ->label(__('messages.issue_violation'))
                 ->icon('heroicon-o-exclamation-triangle')
                 ->color('danger')
+                ->visible(fn () => $this->record->status->value === 'resolved' && $this->record->vehicle_id !== null)
                 ->modalHeading(__('messages.issue_violation'))
                 ->modalSubmitActionLabel(__('filament.actions.create'))
                 ->form([

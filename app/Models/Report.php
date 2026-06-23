@@ -26,6 +26,14 @@ class Report extends Model
         'image_url',
         'video_url',
         'status',
+        'ai_detected_plate',
+        'ai_incident_type',
+        'ai_severity_score',
+        'ai_damage_assessment',
+        'ai_summary',
+        'ai_is_duplicate',
+        'ai_duplicate_of',
+        'ai_analyzed_at',
     ];
 
     protected function casts(): array
@@ -35,6 +43,9 @@ class Report extends Model
             'assigned_department' => Department::class,
             'latitude' => 'decimal:7',
             'longitude' => 'decimal:7',
+            'ai_is_duplicate' => 'boolean',
+            'ai_severity_score' => 'integer',
+            'ai_analyzed_at' => 'datetime',
         ];
     }
 
@@ -51,5 +62,10 @@ class Report extends Model
     public function violations(): HasMany
     {
         return $this->hasMany(TrafficViolation::class);
+    }
+
+    public function duplicateOf(): BelongsTo
+    {
+        return $this->belongsTo(Report::class, 'ai_duplicate_of');
     }
 }

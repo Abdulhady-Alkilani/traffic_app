@@ -21,6 +21,7 @@ class TrafficViolation extends Model
         'status',
         'issued_at',
         'due_date',
+        'payment_receipt_path',
     ];
 
     protected function casts(): array

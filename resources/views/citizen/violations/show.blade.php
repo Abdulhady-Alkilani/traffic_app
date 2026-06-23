@@ -29,7 +29,7 @@
         <div class="lg:col-span-2 space-y-6">
             
             {{-- Status Card --}}
-            <div class="glass-card rounded-2xl p-6 border-l-4 {{ $violation->status->value === 'paid' ? 'border-emerald-500 bg-emerald-50/10' : 'border-rose-500 bg-rose-50/10' }} animate-fade-in-up stagger-1">
+            <div class="glass-card rounded-2xl p-6 border-l-4 {{ $violation->status->value === 'paid' ? 'border-emerald-500 bg-emerald-50/10' : ($violation->status->value === 'pending_verification' ? 'border-yellow-500 bg-yellow-50/10' : 'border-rose-500 bg-rose-50/10') }} animate-fade-in-up stagger-1">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                         <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">{{ __('حالة الدفع') }}</h2>
@@ -44,7 +44,7 @@
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd" />
                                 </svg>
                             @endif
-                            <p class="text-xl font-bold {{ $violation->status->value === 'paid' ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-700 dark:text-rose-400' }}">
+                            <p class="text-xl font-bold {{ $violation->status->value === 'paid' ? 'text-emerald-700 dark:text-emerald-400' : ($violation->status->value === 'pending_verification' ? 'text-yellow-700 dark:text-yellow-400' : 'text-rose-700 dark:text-rose-400') }}">
                                 {{ __('messages.' . $violation->status->value) }}
                             </p>
                         </div>
@@ -153,62 +153,142 @@
 
 @push('scripts')
 @if($violation->status->value === 'unpaid')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    function processPayment(violationId) {
-        Swal.fire({
-            title: '{{ __("هل أنت متأكد من تسديد المخالفة؟") }}',
-            text: "{{ __('سيتم اقتطاع المبلغ من رصيدك.') }}",
-            icon: 'question',
+    async function processPayment(violationId) {
+        const { value: file } = await Swal.fire({
+            title: '<h3 class="text-2xl font-bold text-gray-900 dark:text-white">{{ __("تسديد المخالفة") }}</h3>',
+            html: `
+                <p class="text-gray-500 dark:text-gray-400 text-sm mb-5">{{ __('يرجى إرفاق إشعار الدفع البنكي لمراجعته واعتماد التسديد.') }}</p>
+                <div class="relative group cursor-pointer w-full">
+                    <input type="file" id="receipt-upload" accept="image/*" class="hidden">
+                    <label for="receipt-upload" class="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-rose-300 dark:border-rose-700/50 rounded-2xl cursor-pointer bg-rose-50/50 dark:bg-rose-900/10 hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:border-rose-400 transition-all overflow-hidden relative shadow-inner">
+                        <div id="upload-placeholder" class="flex flex-col items-center justify-center pt-5 pb-6 transition-opacity duration-300">
+                            <div class="w-12 h-12 mb-3 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center shadow-sm">
+                                <svg class="w-6 h-6 text-rose-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                                </svg>
+                            </div>
+                            <p class="mb-1 text-sm text-gray-700 dark:text-gray-300 font-bold">{{ __('اضغط لرفع الصورة') }}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-500">PNG, JPG, JPEG (Max. 2MB)</p>
+                        </div>
+                        <img id="image-preview" class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 z-10" />
+                        <div id="image-overlay" class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+                            <span class="text-white text-sm font-bold flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                {{ __('تغيير الصورة') }}
+                            </span>
+                        </div>
+                    </label>
+                </div>
+            `,
             showCancelButton: true,
             confirmButtonColor: '#059669',
-            cancelButtonColor: '#d33',
-            confirmButtonText: '{{ __("نعم، سدد الآن") }}',
-            cancelButtonText: '{{ __("إلغاء") }}',
+            cancelButtonColor: '#f43f5e',
+            confirmButtonText: '<span class="font-bold px-4 py-1">{{ __("إرسال الإشعار") }}</span>',
+            cancelButtonText: '<span class="font-bold px-4 py-1">{{ __("إلغاء") }}</span>',
+            buttonsStyling: false,
+            customClass: {
+                popup: 'rounded-[2rem] shadow-2xl dark:bg-slate-900 border border-gray-100 dark:border-gray-800 p-4',
+                confirmButton: 'bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl mx-2 transition-colors shadow-lg shadow-emerald-500/30',
+                cancelButton: 'bg-rose-50 hover:bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:hover:bg-rose-900/50 dark:text-rose-400 rounded-xl mx-2 transition-colors',
+                actions: 'mt-6 w-full flex justify-center gap-2'
+            },
             showClass: {
-                popup: 'animate__animated animate__fadeInDown animate__faster'
+                popup: 'animate__animated animate__zoomIn animate__faster'
             },
             hideClass: {
-                popup: 'animate__animated animate__fadeOutUp animate__faster'
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Show loading
-                Swal.fire({
-                    title: '{{ __("جاري المعالجة...") }}',
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading()
+                popup: 'animate__animated animate__zoomOut animate__faster'
+            },
+            didOpen: () => {
+                const input = document.getElementById('receipt-upload');
+                const preview = document.getElementById('image-preview');
+                const placeholder = document.getElementById('upload-placeholder');
+                
+                input.addEventListener('change', function(e) {
+                    if (e.target.files && e.target.files[0]) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            preview.src = e.target.result;
+                            preview.classList.remove('opacity-0');
+                            placeholder.classList.add('opacity-0');
+                        }
+                        reader.readAsDataURL(e.target.files[0]);
                     }
                 });
+            },
+            preConfirm: () => {
+                const file = document.getElementById('receipt-upload').files[0];
+                if (!file) {
+                    Swal.showValidationMessage('{{ __("الرجاء اختيار صورة إشعار الدفع أولاً") }}');
+                }
+                return file;
+            }
+        });
 
-                fetch(`/citizen/violations/${violationId}/pay`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        'Accept': 'application/json',
+        if (file) {
+            Swal.fire({
+                title: '{{ __("جاري الإرسال...") }}',
+                allowOutsideClick: false,
+                customClass: {
+                    popup: 'rounded-[2rem] shadow-2xl dark:bg-slate-900 border border-gray-100 dark:border-gray-800',
+                },
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            });
+
+            const formData = new FormData();
+            formData.append('receipt', file);
+
+            fetch(`/citizen/violations/${violationId}/pay`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json',
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    Swal.fire({
+                        title: '{{ __("نجاح!") }}',
+                        text: data.message,
+                        icon: 'success',
+                        confirmButtonColor: '#059669',
+                        customClass: {
+                            popup: 'rounded-[2rem] shadow-2xl dark:bg-slate-900 border border-gray-100 dark:border-gray-800',
+                            confirmButton: 'bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-8 py-2 transition-colors shadow-lg shadow-emerald-500/30'
+                        }
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'خطأ', 
+                        text: data.message || 'حدث خطأ ما', 
+                        icon: 'error',
+                        customClass: {
+                            popup: 'rounded-[2rem] shadow-2xl dark:bg-slate-900 border border-gray-100 dark:border-gray-800',
+                            confirmButton: 'bg-rose-600 hover:bg-rose-700 text-white rounded-xl px-8 py-2 transition-colors shadow-lg shadow-rose-500/30'
+                        }
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    title: 'خطأ', 
+                    text: 'حدث خطأ في الاتصال', 
+                    icon: 'error',
+                    customClass: {
+                        popup: 'rounded-[2rem] shadow-2xl dark:bg-slate-900 border border-gray-100 dark:border-gray-800',
+                        confirmButton: 'bg-rose-600 hover:bg-rose-700 text-white rounded-xl px-8 py-2 transition-colors shadow-lg shadow-rose-500/30'
                     }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if(data.success) {
-                        Swal.fire({
-                            title: '{{ __("نجاح!") }}',
-                            text: data.message,
-                            icon: 'success',
-                            confirmButtonColor: '#059669'
-                        }).then(() => {
-                            window.location.reload();
-                        });
-                    } else {
-                        Swal.fire('Error', data.message || 'Something went wrong', 'error');
-                    }
-                })
-                .catch(error => {
-                    Swal.fire('Error', 'Network error occurred', 'error');
                 });
-            }
-        })
+            });
+        }
     }
 </script>
 @endif

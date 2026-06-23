@@ -180,7 +180,7 @@ php artisan vendor:publish --provider="Mcamara\LaravelLocalization\LaravelLocali
 
 #### [NEW] `resources/views/citizen/report-wizard.blade.php`
 - Multi-step form باستخدام Alpine.js (`x-data="{ step: 1 }"`)
-- **الخطوة 1:** اختيار نوع البلاغ (حادث، خطر، ازدحام) + التقاط GPS تلقائي
+- **الخطوة 1:** اختيار نوع البلاغ (حادث، مخالفة مرورية، ازدحام) + التقاط GPS تلقائي
 - **الخطوة 2:** اختيار المركبة + رفع صورة + وصف نصي
 - **الخطوة 3:** مراجعة وإرسال
 - تصميم يشبه تطبيقات الموبايل الحديثة

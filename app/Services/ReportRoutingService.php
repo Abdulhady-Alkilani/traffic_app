@@ -35,8 +35,8 @@ class ReportRoutingService
             $data['location_type'] ?? 'in_city'
         );
 
-        return DB::transaction(function () use ($data, $department, $latitude, $longitude): Report {
-            $report = Report::create([
+        $report = DB::transaction(function () use ($data, $department, $latitude, $longitude): Report {
+            return Report::create([
                 'citizen_id' => $data['citizen_id'],
                 'vehicle_id' => $data['vehicle_id'] ?? null,
                 'reported_vehicle_plate' => $data['reported_vehicle_plate'] ?? null,
@@ -50,11 +50,11 @@ class ReportRoutingService
                 'video_url' => $data['video_url'] ?? null,
                 'status' => ReportStatus::New,
             ]);
-
-            ReportCreated::dispatch($report);
-
-            return $report;
         });
+
+        ReportCreated::dispatch($report);
+
+        return $report;
     }
 
     private function isOutsideCityLimits(?float $latitude, ?float $longitude): bool

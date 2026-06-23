@@ -136,8 +136,60 @@
 
         </div>
 
-        {{-- Sidebar: Media Column --}}
+        {{-- Sidebar: AI & Media Column --}}
         <div class="space-y-6">
+            
+            {{-- AI Analysis Card --}}
+            @if($report->ai_analyzed_at)
+            <div class="glass-card rounded-2xl p-6 animate-fade-in-up stagger-3" style="border-top: 4px solid #6366f1;">
+                <div class="flex items-center gap-2 mb-4 pb-2 border-b border-gray-100 dark:border-gray-800">
+                    <svg class="w-6 h-6 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 0 0 2.25-2.25V6.75a2.25 2.25 0 0 0-2.25-2.25H6.75A2.25 2.25 0 0 0 4.5 6.75v10.5a2.25 2.25 0 0 0 2.25 2.25Zm.75-12h9v9h-9v-9Z" />
+                    </svg>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white">{{ __('تحليل الذكاء الاصطناعي') }}</h2>
+                </div>
+
+                @if($report->ai_is_duplicate)
+                <div class="mb-4 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 p-3 rounded-xl border border-rose-100 dark:border-rose-800/50 text-sm font-semibold flex items-start gap-2">
+                    <svg class="w-5 h-5 shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" />
+                    </svg>
+                    <div>
+                        <p>{{ __('تم تحديد هذا البلاغ كبلاغ مكرر.') }}</p>
+                    </div>
+                </div>
+                @endif
+
+                <div class="space-y-4">
+                    @if($report->ai_severity_score)
+                    <div>
+                        <div class="flex justify-between items-end mb-1">
+                            <span class="text-xs font-bold text-gray-500">{{ __('درجة الخطورة المتوقعة') }}</span>
+                            <span class="text-sm font-bold {{ $report->ai_severity_score >= 4 ? 'text-rose-500' : ($report->ai_severity_score == 3 ? 'text-amber-500' : 'text-emerald-500') }}">
+                                {{ $report->ai_severity_score }}/5
+                            </span>
+                        </div>
+                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                            @php
+                                $colors = [1 => 'bg-emerald-500', 2 => 'bg-cyan-500', 3 => 'bg-amber-500', 4 => 'bg-orange-500', 5 => 'bg-rose-500'];
+                                $colorClass = $colors[$report->ai_severity_score] ?? 'bg-gray-500';
+                                $width = ($report->ai_severity_score / 5) * 100;
+                            @endphp
+                            <div class="{{ $colorClass }} h-2.5 rounded-full transition-all duration-1000" style="width: {{ $width }}%"></div>
+                        </div>
+                    </div>
+                    @endif
+
+                    @if($report->ai_summary)
+                    <div>
+                        <span class="text-xs font-bold text-gray-500 block mb-1">{{ __('ملخص التحليل') }}</span>
+                        <p class="text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-slate-900 p-3 rounded-lg border border-gray-100 dark:border-gray-800 leading-relaxed">{{ $report->ai_summary }}</p>
+                    </div>
+                    @endif
+                </div>
+            </div>
+            @endif
+
             <div class="glass-card rounded-2xl p-6 animate-fade-in-up stagger-4">
                 <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-100 dark:border-gray-800">{{ __('المرفقات') }}</h2>
                 

@@ -87,9 +87,14 @@ class TrafficViolationResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('status')
                             ->label(__('messages.status'))
-                            ->options(ViolationStatus::class)
-                            ->enum(ViolationStatus::class)
+                            ->options(ViolationStatus::getSelectOptions())
                             ->required(),
+                        Forms\Components\FileUpload::make('payment_receipt_path')
+                            ->label(__('إشعار الدفع'))
+                            ->image()
+                            ->disabled()
+                            ->columnSpanFull()
+                            ->visible(fn ($record) => $record && $record->payment_receipt_path),
                     ]),
             ]);
     }
@@ -122,8 +127,7 @@ class TrafficViolationResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('messages.status'))
-                    ->badge()
-                    ->color(fn(ViolationStatus $state): string => $state->color()),
+                    ->badge(),
                 Tables\Columns\TextColumn::make('issued_at')
                     ->label(__('messages.issued_at'))
                     ->dateTime()
@@ -132,11 +136,14 @@ class TrafficViolationResource extends Resource
                     ->label(__('messages.due_date'))
                     ->date()
                     ->sortable(),
+                Tables\Columns\ImageColumn::make('payment_receipt_path')
+                    ->label(__('إشعار الدفع'))
+                    ->circular(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
                     ->label(__('messages.status'))
-                    ->options(ViolationStatus::class),
+                    ->options(ViolationStatus::getSelectOptions()),
                 Tables\Filters\Filter::make('issued_at')
                     ->form([
                         Forms\Components\DatePicker::make('issued_from')

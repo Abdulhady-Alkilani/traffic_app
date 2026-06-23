@@ -36,10 +36,8 @@ class LatestAssignedReports extends BaseWidget
                     ->formatStateUsing(fn (string $state): string => __('messages.' . $state)),
                 
                 Tables\Columns\TextColumn::make('status')
-                    ->label('الحالة')
-                    ->badge()
-                    ->formatStateUsing(fn (ReportStatus $state): string => $state->label())
-                    ->color(fn (ReportStatus $state): string => $state->color()),
+                    ->label(__('messages.status'))
+                    ->badge(),
                 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('التاريخ')

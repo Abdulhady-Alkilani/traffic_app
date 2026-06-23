@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'app_name' => 'Traffic Safety System',
     'home' => 'Home',
     'login' => 'Login',
     'logout' => 'Logout',
@@ -48,7 +49,7 @@ return [
     'step2_title' => 'Vehicle, Image & Description',
     'step3_title' => 'Review & Submit',
     'accident' => 'Accident',
-    'hazard' => 'Hazard',
+    'hazard' => 'Traffic Violation',
     'traffic_jam' => 'Traffic Jam',
     'security_threat' => 'Security Threat',
     'location' => 'Location',
@@ -77,7 +78,7 @@ return [
     'status' => 'Status',
     'unpaid' => 'Unpaid',
     'paid' => 'Paid',
-    'canceled' => 'Canceled',
+    'pending_verification' => 'Pending Verification',
     'pay_now' => 'Pay Now',
     'payment_success' => 'Payment processed successfully!',
     'no_violations' => 'No violations found.',
@@ -127,4 +128,26 @@ return [
     'highway_patrol' => 'Highway Patrol',
     'traffic_police' => 'Traffic Police',
     'local_police' => 'Local Police',
+
+    // AI Analysis
+    'ai_analysis' => 'AI Analysis',
+    'ai_severity_score' => 'Severity Score',
+    'ai_detected_plate' => 'Detected Plate Number',
+    'ai_incident_type' => 'Detected Incident Type',
+    'ai_damage_assessment' => 'Damage Assessment',
+    'ai_summary' => 'Analysis Summary',
+    'ai_is_duplicate' => 'Duplicate Report',
+    'ai_duplicate_of' => 'Duplicate Of',
+    'ai_analyzed_at' => 'Analyzed At',
+    'ai_reanalyze' => 'Re-analyze',
+    'ai_analyzing' => 'Analyzing...',
+    'ai_no_analysis' => 'Not analyzed yet',
+    'severity_1' => 'Very Minor',
+    'severity_2' => 'Minor',
+    'severity_3' => 'Moderate',
+    'severity_4' => 'Severe',
+    'severity_5' => 'Critical',
+
+    // Misc
+    'map' => 'Map',
 ];

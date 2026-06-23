@@ -61,6 +61,9 @@ class AssignedReportResource extends Resource
                         Forms\Components\TextInput::make('longitude')
                             ->label(__('messages.coordinates'))
                             ->disabled(),
+                        Forms\Components\View::make('filament.components.map-viewer')
+                            ->columnSpanFull()
+                            ->visible(fn ($record) => $record && $record->latitude && $record->longitude),
                         Forms\Components\FileUpload::make('image_url')
                             ->label(__('الصور المرفقة'))
                             ->image()
@@ -73,6 +76,58 @@ class AssignedReportResource extends Resource
                             ->columnSpanFull()
                             ->visible(fn ($record) => $record && $record->video_url),
                     ])->columns(2),
+                Forms\Components\Section::make(__('messages.ai_analysis'))
+                    ->icon('heroicon-o-cpu-chip')
+                    ->schema([
+                        Forms\Components\Placeholder::make('ai_severity_display')
+                            ->label(__('messages.ai_severity_score'))
+                            ->content(function ($record) {
+                                if (!$record || !$record->ai_severity_score) return __('messages.ai_no_analysis');
+                                $score = $record->ai_severity_score;
+                                $colors = [1 => '#10b981', 2 => '#22d3ee', 3 => '#f59e0b', 4 => '#f97316', 5 => '#ef4444'];
+                                $labels = [1 => __('messages.severity_1'), 2 => __('messages.severity_2'), 3 => __('messages.severity_3'), 4 => __('messages.severity_4'), 5 => __('messages.severity_5')];
+                                $color = $colors[$score] ?? '#6b7280';
+                                $label = $labels[$score] ?? $score;
+                                $width = ($score / 5) * 100;
+                                return new \Illuminate\Support\HtmlString(
+                                    '<div class="flex items-center gap-3"><span style="color:'.$color.';font-size:1.5rem;font-weight:800;">'.$score.'/5</span>'
+                                    .'<div class="flex-1"><div style="background:#e5e7eb;border-radius:9999px;height:8px;"><div style="background:'.$color.';width:'.$width.'%;border-radius:9999px;height:8px;transition:width 0.5s;"></div></div>'
+                                    .'<span style="font-size:0.75rem;color:'.$color.';font-weight:600;">'.$label.'</span></div></div>'
+                                );
+                            }),
+                        Forms\Components\Placeholder::make('ai_detected_plate_display')
+                            ->label(__('messages.ai_detected_plate'))
+                            ->content(fn ($record) => $record?->ai_detected_plate
+                                ? new \Illuminate\Support\HtmlString('<span style="background:#eef2ff;color:#4f46e5;padding:4px 12px;border-radius:8px;font-weight:700;font-family:monospace;font-size:1.1rem;">' . $record->ai_detected_plate . '</span>')
+                                : '-'),
+                        Forms\Components\Placeholder::make('ai_incident_type_display')
+                            ->label(__('messages.ai_incident_type'))
+                            ->content(function ($record) {
+                                if (!$record || !$record->ai_incident_type) return '-';
+                                $map = ['accident' => __('messages.accident'), 'hazard' => __('messages.hazard'), 'traffic_jam' => __('messages.traffic_jam'), 'security_threat' => __('messages.security_threat')];
+                                return $map[$record->ai_incident_type] ?? $record->ai_incident_type;
+                            }),
+                        Forms\Components\Placeholder::make('ai_damage_assessment_display')
+                            ->label(__('messages.ai_damage_assessment'))
+                            ->content(fn ($record) => $record?->ai_damage_assessment ?? '-')
+                            ->columnSpanFull(),
+                        Forms\Components\Placeholder::make('ai_summary_display')
+                            ->label(__('messages.ai_summary'))
+                            ->content(fn ($record) => $record?->ai_summary ?? '-')
+                            ->columnSpanFull(),
+                        Forms\Components\Placeholder::make('ai_duplicate_display')
+                            ->label(__('messages.ai_is_duplicate'))
+                            ->content(function ($record) {
+                                if (!$record || !$record->ai_is_duplicate) return new \Illuminate\Support\HtmlString('<span style="color:#10b981;font-weight:600;">✓ ' . __('لا') . '</span>');
+                                $link = $record->ai_duplicate_of ? ' — <a href="' . route('filament.police.resources.assigned-reports.view', $record->ai_duplicate_of) . '" style="color:#6366f1;text-decoration:underline;">' . __('messages.ai_duplicate_of') . ' #' . $record->ai_duplicate_of . '</a>' : '';
+                                return new \Illuminate\Support\HtmlString('<span style="color:#ef4444;font-weight:700;">⚠ ' . __('نعم') . '</span>' . $link);
+                            }),
+                        Forms\Components\Placeholder::make('ai_analyzed_at_display')
+                            ->label(__('messages.ai_analyzed_at'))
+                            ->content(fn ($record) => $record?->ai_analyzed_at?->format('Y/m/d h:i A') ?? __('messages.ai_no_analysis')),
+                    ])->columns(2)
+                    ->collapsible()
+                    ->visible(fn ($record) => $record !== null),
                 Forms\Components\Section::make(__('filament.sections.update_status'))
                     ->schema([
                         Forms\Components\Select::make('status')
@@ -105,11 +160,32 @@ class AssignedReportResource extends Resource
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('messages.status'))
                     ->badge()
-                    ->color(fn(ReportStatus $state): string => $state->color())
                     ->searchable(),
                 Tables\Columns\TextColumn::make('assigned_department')
                     ->label(__('filament.columns.assigned_department'))
                     ->badge()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('ai_severity_score')
+                    ->label(__('messages.ai_severity_score'))
+                    ->badge()
+                    ->color(fn (?int $state): string => match ($state) {
+                        1 => 'success',
+                        2 => 'info',
+                        3 => 'warning',
+                        4 => 'warning',
+                        5 => 'danger',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn (?int $state): string => $state ? $state . '/5' : '-')
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\IconColumn::make('ai_is_duplicate')
+                    ->label(__('messages.ai_is_duplicate'))
+                    ->boolean()
+                    ->trueIcon('heroicon-o-exclamation-triangle')
+                    ->falseIcon('heroicon-o-check-circle')
+                    ->trueColor('danger')
+                    ->falseColor('success')
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('filament.columns.created_at'))

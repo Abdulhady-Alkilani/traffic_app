@@ -60,29 +60,73 @@ class ActivityLogResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('admin.full_name')
-                    ->label(__('filament.columns.admin'))
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('actor_display')
+                    ->label(__('المنفذ'))
+                    ->getStateUsing(function ($record): string {
+                        if ($record->actor_name) {
+                            $typeLabel = match ($record->actor_type) {
+                                'admin' => 'إدمن',
+                                'police' => 'شرطة',
+                                'citizen' => 'مواطن',
+                                'system' => 'نظام',
+                                default => '',
+                            };
+                            return $record->actor_name . ($typeLabel ? " ({$typeLabel})" : '');
+                        }
+                        return $record->admin?->full_name ?? '—';
+                    })
+                    ->badge()
+                    ->color(fn ($record): string => match ($record->actor_type) {
+                        'admin' => 'success',
+                        'police' => 'info',
+                        'citizen' => 'gray',
+                        'system' => 'warning',
+                        default => 'gray',
+                    })
+                    ->searchable(query: function (\Illuminate\Database\Eloquent\Builder $query, string $search): \Illuminate\Database\Eloquent\Builder {
+                        return $query->where('actor_name', 'like', "%{$search}%")
+                            ->orWhereHas('admin', fn ($q) => $q->where('full_name', 'like', "%{$search}%"));
+                    }),
                 Tables\Columns\TextColumn::make('action_type')
                     ->label(__('filament.columns.action_type'))
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'create' => 'success',
                         'update' => 'warning',
+                        'status_change' => 'info',
+                        'payment' => 'primary',
                         'delete' => 'danger',
                         default => 'gray',
+                    })
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'create' => 'إنشاء',
+                        'update' => 'تعديل',
+                        'status_change' => 'تغيير حالة',
+                        'payment' => 'دفع',
+                        'delete' => 'حذف',
+                        'view' => 'عرض',
+                        default => $state,
                     })
                     ->searchable(),
                 Tables\Columns\TextColumn::make('target_table')
                     ->label(__('filament.columns.target_table'))
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'reports' => 'بلاغات',
+                        'traffic_violations' => 'مخالفات',
+                        'vehicles' => 'مركبات',
+                        'users' => 'مستخدمين',
+                        'citizens_data' => 'مواطنين',
+                        default => $state,
+                    })
                     ->searchable(),
                 Tables\Columns\TextColumn::make('description')
                     ->label(__('messages.description'))
-                    ->limit(50)
+                    ->limit(60)
+                    ->wrap()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('filament.columns.created_at'))
-                    ->dateTime()
+                    ->dateTime('Y/m/d h:i A')
                     ->sortable(),
             ])
             ->filters([

@@ -120,6 +120,7 @@ return [
         'violation_status' => [
             'unpaid' => 'Unpaid',
             'paid' => 'Paid',
+            'pending_verification' => 'Pending Verification',
             'canceled' => 'Canceled',
         ],
         'report_status' => [

@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'app_name' => 'نظام السلامة المرورية',
     'home' => 'الرئيسية',
     'login' => 'تسجيل الدخول',
     'logout' => 'تسجيل الخروج',
@@ -48,7 +49,7 @@ return [
     'step2_title' => 'المركبة والصورة والوصف',
     'step3_title' => 'مراجعة وإرسال',
     'accident' => 'حادث',
-    'hazard' => 'خطر',
+    'hazard' => 'مخالفة مرورية',
     'traffic_jam' => 'ازدحام مروري',
     'security_threat' => 'تهديد أمني',
     'location' => 'الموقع',
@@ -76,8 +77,8 @@ return [
     'issued_at' => 'تاريخ الإصدار',
     'status' => 'الحالة',
     'unpaid' => 'غير مدفوعة',
-    'paid' => 'مدفوعة',
-    'canceled' => 'ملغاة',
+    'paid' => 'مسددة',
+    'pending_verification' => 'قيد المراجعة',
     'pay_now' => 'دفع الآن',
     'payment_success' => 'تمت عملية الدفع بنجاح!',
     'no_violations' => 'لا توجد مخالفات.',
@@ -127,4 +128,26 @@ return [
     'highway_patrol' => 'دورية الطرق السريعة',
     'traffic_police' => 'شرطة المرور',
     'local_police' => 'الشرطة المحلية',
+
+    // AI Analysis
+    'ai_analysis' => 'تحليل الذكاء الاصطناعي',
+    'ai_severity_score' => 'درجة الخطورة',
+    'ai_detected_plate' => 'رقم اللوحة المكتشف',
+    'ai_incident_type' => 'نوع الحادث المكتشف',
+    'ai_damage_assessment' => 'تقييم الأضرار',
+    'ai_summary' => 'ملخص التحليل',
+    'ai_is_duplicate' => 'بلاغ مكرر',
+    'ai_duplicate_of' => 'مكرر من البلاغ',
+    'ai_analyzed_at' => 'تاريخ التحليل',
+    'ai_reanalyze' => 'إعادة التحليل الذكي',
+    'ai_analyzing' => 'جاري التحليل...',
+    'ai_no_analysis' => 'لم يتم التحليل بعد',
+    'severity_1' => 'طفيف جداً',
+    'severity_2' => 'طفيف',
+    'severity_3' => 'متوسط',
+    'severity_4' => 'خطير',
+    'severity_5' => 'خطير جداً',
+
+    // Misc
+    'map' => 'الخريطة',
 ];

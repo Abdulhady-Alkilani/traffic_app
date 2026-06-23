@@ -120,7 +120,8 @@ return [
     'enums' => [
         'violation_status' => [
             'unpaid' => 'غير مدفوعة',
-            'paid' => 'مدفوعة',
+            'paid' => 'مسددة',
+            'pending_verification' => 'قيد المراجعة',
             'canceled' => 'ملغاة',
         ],
         'report_status' => [
