@@ -14,6 +14,16 @@ use Carbon\CarbonPeriod;
 
 class AnalyticsService
 {
+    /**
+     * Columns allowed for report distribution queries (guards against SQL injection).
+     */
+    private const REPORT_DISTRIBUTION_COLUMNS = ['report_type', 'status', 'assigned_department'];
+
+    /**
+     * Columns allowed for violation distribution queries (guards against SQL injection).
+     */
+    private const VIOLATION_DISTRIBUTION_COLUMNS = ['violation_type', 'status'];
+
     /** @var array<string, mixed> */
     private array $cache = [];
 
@@ -47,7 +57,10 @@ class AnalyticsService
             'collected_fines' => (float) $this->violationQuery($start, $end)
                 ->where('status', ViolationStatus::Paid->value)->sum('fine_amount'),
             'outstanding_fines' => (float) $this->violationQuery($start, $end)
-                ->where('status', ViolationStatus::Unpaid->value)->sum('fine_amount'),
+                ->whereIn('status', [
+                    ViolationStatus::Unpaid->value,
+                    ViolationStatus::PendingVerification->value,
+                ])->sum('fine_amount'),
         ];
     }
 
@@ -105,10 +118,14 @@ class AnalyticsService
 
     /**
      * Percentage of issued fines that have been collected.
+     *
+     * Canceled fines are excluded from the denominator so the rate reflects
+     * only fines that are actually still actionable.
      */
     public function collectionRate(Carbon $start, Carbon $end): float
     {
-        $total = $this->violationQuery($start, $end)->count();
+        $total = $this->violationQuery($start, $end)
+            ->where('status', '!=', ViolationStatus::Canceled->value)->count();
 
         if ($total === 0) {
             return 0.0;
@@ -162,8 +179,10 @@ class AnalyticsService
      */
     public function reportDistribution(Carbon $start, Carbon $end, string $column): array
     {
+        $this->guardColumn($column, self::REPORT_DISTRIBUTION_COLUMNS);
+
         return $this->reportQuery($start, $end)
-            ->selectRaw("$column, COUNT(*) as aggregate")
+            ->selectRaw("{$column}, COUNT(*) as aggregate")
             ->groupBy($column)
             ->orderByDesc('aggregate')
             ->pluck('aggregate', $column)
@@ -176,10 +195,12 @@ class AnalyticsService
      *
      * @return array<string, int>
      */
-    public function violationDistribution(Carbon $start, $end, string $column): array
+    public function violationDistribution(Carbon $start, Carbon $end, string $column): array
     {
+        $this->guardColumn($column, self::VIOLATION_DISTRIBUTION_COLUMNS);
+
         return $this->violationQuery($start, $end)
-            ->selectRaw("$column, COUNT(*) as aggregate")
+            ->selectRaw("{$column}, COUNT(*) as aggregate")
             ->groupBy($column)
             ->orderByDesc('aggregate')
             ->pluck('aggregate', $column)
@@ -198,7 +219,7 @@ class AnalyticsService
 
         return $this->cache[$key] ??= (function () use ($start, $end) {
             $reportRegions = $this->reportQuery($start, $end)->get(['location_text', 'status']);
-            $violationRegions = $this->violationQuery($start, $end)->get();
+            $violationRegions = $this->violationQuery($start, $end)->get(['description']);
 
             $regions = [];
 
@@ -300,6 +321,8 @@ class AnalyticsService
 
         $values = array_values($history);
         $forecast = [];
+        $slope = 0.0;
+        $intercept = 0.0;
 
         if (count($values) >= 2) {
             [$slope, $intercept] = $this->linearRegression($values);
@@ -313,8 +336,8 @@ class AnalyticsService
             }
         }
 
-        $trendDirection = empty($values) || count($values) < 2 ? 'stable'
-            : ($values[count($values) - 1] > $values[0] ? 'up' : ($values[count($values) - 1] < $values[0] ? 'down' : 'stable'));
+        $trendDirection = count($values) < 2 ? 'stable'
+            : ($slope > 0 ? 'up' : ($slope < 0 ? 'down' : 'stable'));
 
         return [
             'history' => $history,
@@ -335,12 +358,20 @@ class AnalyticsService
         return $this->cache[$key] ??= (function () use ($start, $end) {
             $hours = array_fill(0, 24, 0);
 
+            $reportHours = $this->reportQuery($start, $end)
+                ->selectRaw("substr(created_at, 12, 2) as hour, COUNT(*) as aggregate")
+                ->groupBy('hour')->pluck('aggregate', 'hour');
+
             $violationHours = $this->violationQuery($start, $end)
                 ->selectRaw("substr(issued_at, 12, 2) as hour, COUNT(*) as aggregate")
                 ->groupBy('hour')->pluck('aggregate', 'hour');
 
+            foreach ($reportHours as $hour => $count) {
+                $hours[(int) $hour] += (int) $count;
+            }
+
             foreach ($violationHours as $hour => $count) {
-                $hours[(int) $hour] = (int) $count;
+                $hours[(int) $hour] += (int) $count;
             }
 
             $regions = $this->regionCompliance($start, $end);
@@ -490,6 +521,20 @@ class AnalyticsService
     protected function violationQuery(Carbon $start, Carbon $end): \Illuminate\Database\Eloquent\Builder
     {
         return TrafficViolation::query()->whereBetween('issued_at', [$start, $end]);
+    }
+
+    /**
+     * Ensure a column is part of an allow-list before using it in a raw query.
+     *
+     * @param  array<int, string>  $allowed
+     *
+     * @throws \InvalidArgumentException
+     */
+    protected function guardColumn(string $column, array $allowed): void
+    {
+        if (! in_array($column, $allowed, true)) {
+            throw new \InvalidArgumentException("Distribution column [{$column}] is not allowed.");
+        }
     }
 
     protected function key(string $method, Carbon $start, Carbon $end): string

@@ -212,3 +212,66 @@ it('builds custom reports by type and status', function () {
         ->and($violations)->toHaveCount(1)
         ->and($violations[0]['fine'])->toBe(30000.0);
 });
+
+it('rejects disallowed distribution columns', function () {
+    $service = app(AnalyticsService::class);
+    $start = Carbon::create(2026, 1, 1);
+    $end = Carbon::create(2026, 6, 30);
+
+    expect(fn () => $service->reportDistribution($start, $end, 'password; DROP TABLE reports; --'))
+        ->toThrow(\InvalidArgumentException::class)
+        ->and(fn () => $service->violationDistribution($start, $end, 'evil_column'))
+        ->toThrow(\InvalidArgumentException::class);
+});
+
+it('excludes canceled fines from collection rate and includes pending in outstanding', function () {
+    [$user, $citizen] = makeCitizen();
+    $officer = makeOfficer();
+
+    $start = Carbon::create(2026, 1, 1);
+    $end = Carbon::create(2026, 6, 30);
+
+    createViolation($citizen, $officer, Carbon::create(2026, 2, 1, 9), 50000, 'unpaid', 'دمشق');
+    createViolation($citizen, $officer, Carbon::create(2026, 3, 1, 9), 25000, 'paid', 'حلب');
+    createViolation($citizen, $officer, Carbon::create(2026, 4, 1, 9), 30000, 'pending_verification', 'حلب');
+    createViolation($citizen, $officer, Carbon::create(2026, 5, 1, 9), 10000, 'canceled', 'دمشق');
+
+    $kpis = app(AnalyticsService::class)->kpis($start, $end);
+
+    // paid=1, actionable (excluding canceled)=3 -> 33.33%
+    expect($kpis['collection_rate'])->toBe(33.33)
+        ->and($kpis['outstanding_fines'])->toBe(80000.0); // unpaid 50000 + pending 30000
+});
+
+it('counts report hours in hotspots peak hours', function () {
+    [$user, $citizen] = makeCitizen();
+    $officer = makeOfficer();
+
+    $start = Carbon::create(2026, 1, 1);
+    $end = Carbon::create(2026, 6, 30);
+
+    createReport($citizen, ReportStatus::New->value, 'دمشق', Carbon::create(2026, 3, 1, 14), Carbon::create(2026, 3, 1, 14));
+    createReport($citizen, ReportStatus::New->value, 'دمشق', Carbon::create(2026, 3, 2, 14), Carbon::create(2026, 3, 2, 14));
+    createViolation($citizen, $officer, Carbon::create(2026, 3, 3, 14), 10000, 'unpaid', 'دمشق');
+
+    $hotspots = app(AnalyticsService::class)->hotspots($start, $end);
+
+    expect($hotspots['peak_hours'][14])->toBe(3);
+});
+
+it('derives forecast trend direction from regression slope', function () {
+    [$user, $citizen] = makeCitizen();
+    $officer = makeOfficer();
+
+    // Increasing monthly counts: 1, 2, 3 -> positive slope -> up
+    createViolation($citizen, $officer, Carbon::now()->subMonths(2)->startOfMonth()->addDays(5), 10000);
+    createViolation($citizen, $officer, Carbon::now()->subMonths(1)->startOfMonth()->addDays(5), 10000);
+    createViolation($citizen, $officer, Carbon::now()->subMonths(1)->startOfMonth()->addDays(6), 10000);
+    createViolation($citizen, $officer, Carbon::now()->startOfMonth()->addDays(5), 10000);
+    createViolation($citizen, $officer, Carbon::now()->startOfMonth()->addDays(6), 10000);
+    createViolation($citizen, $officer, Carbon::now()->startOfMonth()->addDays(7), 10000);
+
+    $forecast = app(AnalyticsService::class)->forecastIncidents(3, 3);
+
+    expect($forecast['trend'])->toBe('up');
+});
