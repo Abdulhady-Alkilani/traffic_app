@@ -98,7 +98,7 @@
                                     {{ $report->status->value === 'resolved' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300' : '' }}
                                     {{ $report->status->value === 'rejected' ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/50 dark:text-rose-300' : '' }}
                                 ">
-                                    {{ $report->status->label() }}
+                                    {{ $report->status->getLabel() }}
                                 </span>
                                 <span class="text-xs font-mono bg-gray-100 dark:bg-slate-800 text-gray-500 px-2 py-0.5 rounded-full">#{{ $report->id }}</span>
                             </div>
