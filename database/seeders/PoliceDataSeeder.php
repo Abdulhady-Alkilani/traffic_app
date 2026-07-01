@@ -23,7 +23,7 @@ class PoliceDataSeeder extends Seeder
         ],
         [
             'username' => 'officer_traffic_police',
-            'email' => ' ',
+            'email' => 'officer_traffic_police@traffic.gov.sy',
             'badge_number' => 'DM7832',
             'full_name' => 'النقيب لينا الشريف',
             'rank' => 'نقيب',

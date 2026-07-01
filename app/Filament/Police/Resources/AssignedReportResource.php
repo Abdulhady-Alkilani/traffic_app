@@ -62,8 +62,8 @@ class AssignedReportResource extends Resource
                             ->label(__('messages.coordinates'))
                             ->disabled(),
                         Forms\Components\View::make('filament.components.map-viewer')
-                            ->columnSpanFull()
-                            ->visible(fn ($record) => $record && $record->latitude && $record->longitude),
+                            ->viewData(['isInteractive' => false])
+                            ->columnSpanFull(),
                         Forms\Components\FileUpload::make('image_url')
                             ->label(__('الصور المرفقة'))
                             ->image()

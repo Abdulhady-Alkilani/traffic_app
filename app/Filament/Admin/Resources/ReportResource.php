@@ -64,9 +64,11 @@ class ReportResource extends Resource
                             ->required(),
                         Forms\Components\TextInput::make('location_text')
                             ->label(__('messages.location'))
+                            ->disabled()
                             ->required(),
                         Forms\Components\TextInput::make('latitude')
-                            ->label(__('messages.coordinates'))
+                            ->label(__('خط العرض') . ' (Latitude)')
+                            ->disabled()
                             ->required()
                             ->inputMode('decimal')
                             ->rule('regex:/^[-]?\d+[\.,]?\d*$/')
@@ -82,7 +84,8 @@ class ReportResource extends Resource
                             ])
                             ->mutateDehydratedStateUsing(fn ($state) => str_replace(',', '.', (string) $state)),
                         Forms\Components\TextInput::make('longitude')
-                            ->label(__('messages.coordinates'))
+                            ->label(__('خط الطول') . ' (Longitude)')
+                            ->disabled()
                             ->required()
                             ->inputMode('decimal')
                             ->rule('regex:/^[-]?\d+[\.,]?\d*$/')
@@ -98,8 +101,17 @@ class ReportResource extends Resource
                             ])
                             ->mutateDehydratedStateUsing(fn ($state) => str_replace(',', '.', (string) $state)),
                         Forms\Components\View::make('filament.components.map-viewer')
-                            ->columnSpanFull()
-                            ->visible(fn ($record) => $record && $record->latitude && $record->longitude),
+                            ->viewData(['isInteractive' => false])
+                            ->columnSpanFull(),
+                        Forms\Components\Select::make('assigned_department')
+                            ->label(__('filament.columns.assigned_department'))
+                            ->options(Department::class)
+                            ->required(),
+                        Forms\Components\Select::make('status')
+                            ->label(__('messages.status'))
+                            ->options(ReportStatus::class)
+                            ->required()
+                            ->default('new'),
                         Forms\Components\FileUpload::make('image_url')
                             ->label(__('الصور المرفقة'))
                             ->image()
@@ -251,11 +263,18 @@ class ReportResource extends Resource
         ];
     }
 
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListReports::route('/'),
+            'create' => Pages\CreateReport::route('/create'),
             'view' => Pages\ViewReport::route('/{record}'),
+            'edit' => Pages\EditReport::route('/{record}/edit'),
         ];
     }
 }
